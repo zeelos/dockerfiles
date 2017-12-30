@@ -1,0 +1,275 @@
+# zeelos - cloud
+# MAINTAINER zeelos.io - https://zeelos.io
+
+version: '3'
+
+services:
+
+  zookeeper-cloud:
+    image: confluentinc/cp-zookeeper:4.0.0
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+      - zookeeper-log:/var/lib/zookeeper/log
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+      - KAFKA_JMX_HOSTNAME=localhost
+      - KAFKA_JMX_PORT=9585
+      - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+    networks:
+      - cloudnet
+      - edgenet
+    ports:
+      - 2181:2181
+      - 9585:9585
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "ZooKeeper - An open-source server which enables highly reliable distributed coordination"
+
+  kafka-cloud:
+    image: confluentinc/cp-kafka:4.0.0
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-cloud:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka-cloud:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - KAFKA_JMX_HOSTNAME=localhost
+      - KAFKA_JMX_PORT=9581
+      - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+    networks:
+      - cloudnet
+      - edgenet
+    ports:
+      - 9092:9092
+      - 9581:9581
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Kafka - A distributed streaming platform"
+
+  schema-registry-cloud:
+    image: confluentinc/cp-schema-registry:4.0.0
+    environment:
+      - SCHEMA_REGISTRY_HOST_NAME=schema-registry-cloud
+      - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8081
+      - SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=zookeeper-cloud:2181
+      - SCHEMA_REGISTRY_MASTER_ELIGIBILIY=true
+      - SCHEMA_REGISTRY_ZK_NAMESPACE=zeelos
+      - SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
+      - SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN=*
+      - SCHEMA_REGISTRY_JMX_HOSTNAME=localhost
+      - SCHEMA_REGISTRY_JMX_PORT=9582
+      - SCHEMA_REGISTRY_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+    networks:
+      - cloudnet
+    ports:
+      - 8081:8081
+      - 9582:9582
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Schema Registry - Schema registry for Apache Kafka"
+
+  kafka-connect-cloud:
+    image: zeelos/kafka-connect-leshan-influxdb:0.1-SNAPSHOT
+    environment:
+      - CONNECT_BOOTSTRAP_SERVERS=kafka-cloud:9092
+      - CONNECT_GROUP_ID=zeelos-connect-group
+      - CONNECT_CONFIG_STORAGE_TOPIC=zeelos-connect-configs-cloud
+      - CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR=1
+      - CONNECT_OFFSET_STORAGE_TOPIC=zeelos-connect-offsets-cloud
+      - CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR=1
+      - CONNECT_OFFSET_FLUSH_INTERVAL_MS=10000
+      - CONNECT_STATUS_STORAGE_TOPIC=zeelos-connect-status-cloud
+      - CONNECT_STATUS_STORAGE_REPLICATION_FACTOR=1
+      - CONNECT_KEY_CONVERTER=io.confluent.connect.avro.AvroConverter
+      - CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL=http://schema-registry-cloud:8081
+      - CONNECT_VALUE_CONVERTER=io.confluent.connect.avro.AvroConverter
+      - CONNECT_VALUE_CONVERTER_ENHANCED_AVRO_SCHEMA_SUPPORT=true
+      - CONNECT_VALUE_CONVERTER_CONNECT_META_DATA=false
+      - CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL=http://schema-registry-cloud:8081
+      - CONNECT_INTERNAL_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_INTERNAL_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_REST_ADVERTISED_HOST_NAME=kafka-connect-cloud
+      - CONNECT_REST_PORT=8083
+      - CONNECT_REST_ADVERTISED_PORT=8083
+      - CONNECT_REST_ACCESS_CONTROL_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
+      - CONNECT_REST_ACCESS_CONTROL_ALLOW_ORIGIN=*
+      - CONNECT_ZOOKEEPER_CONNECT=zookeeper-cloud:2181
+      - CONNECT_LOG4J_ROOT_LOGLEVEL=INFO
+      - CONNECT_LOG4J_LOGGERS=io.zeelos.leshan=DEBUG,com.datamountaineer=DEBUG,io.confluent.connect.replicator=DEBUG
+      - CONNECT_PLUGIN_PATH=/opt/connectors,/usr/share/java/kafka-connect-elasticsearch,/usr/share/java/kafka-connect-jdbc
+      - KAFKA_JMX_HOSTNAME=localhost
+      - KAFKA_JMX_PORT=9584
+      - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+    networks:
+      - cloudnet
+    ports:
+      - 8083:8083
+      - 9584:9584
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Connect - Your hub for connecting Apache Kafka to all your systems"
+
+  kafka-rest-cloud:
+    image: confluentinc/cp-kafka-rest:4.0.0
+    environment:
+      - KAFKA_REST_HOST_NAME=kafka-rest-cloud
+      - KAFKA_REST_LISTENERS=http://0.0.0.0:8082
+      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper-cloud:2181
+      - KAFKA_REST_BOOTSTRAP_SERVERS=kafka-cloud:9092
+      - KAFKA_REST_SCHEMA_REGISTRY_URL=http://schema-registry-cloud:8081
+      - KAFKA_REST_ACCESS_CONTROL_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
+      - KAFKA_REST_ACCESS_CONTROL_ALLOW_ORIGIN=*
+      - KAFKA_REST_CONSUMER_REQUEST_TIMEOUT_MS=30000
+      - KAFKA_REST_JMX_HOSTNAME=localhost
+      - KAFKA_REST_JMX_PORT=9583
+      - KAFKA_REST_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+    networks:
+      - cloudnet
+    ports:
+      - 8082:8082
+      - 9583:9583
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Kafka REST Proxy - A RESTful interface to a Kafka cluster"
+
+  kafka-mirrormaker:
+    image: zeelos/kafka-mirrormaker:0.1-SNAPSHOT
+    environment:
+      - MIRRORMAKER_WHITE_LIST=^server1_((?!req).)*$$
+      - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
+      - MIRRORMAKER_OFFSET_COMMIT_INTERVAL=60000
+      - MIRRORMAKER_NUM_STREAMS=1
+      - CONSUMER_BOOTSTRAP_SERVERS=kafka-edge:9082
+      - CONSUMER_GROUP_ID=MirrorMaker
+      - CONSUMER_AUTO_OFFSET_RESET=latest
+      - PRODUCER_BOOTSTRAP_SERVERS=kafka-cloud:9092
+      - KAFKA_JMX_HOSTNAME=localhost
+      - KAFKA_JMX_PORT=9574
+      - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+    networks:
+      - cloudnet
+      - edgenet
+    ports:
+      - 9574:9574
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Kafka MirrorMaker - A stand-alone tool for copying data between two Apache Kafka clusters"
+
+  landoop-fast-data-dev-ui:
+    image: zeelos/landoop-fast-data-dev-ui:0.1-SNAPSHOT
+    networks:
+      - cloudnet
+      - edgenet
+    ports:
+      - 3030:3030
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Landoop Fast Data Tools - kafka-topics-ui, schema-registry-ui, kafka-connect-ui"
+
+  orientdb:
+    image: zeelos/orientdb:3.0.0RC1-with-zeelosdb
+    volumes:
+      - orientdb-data:/orientdb/databases
+    environment:
+      - ORIENTDB_ROOT_PASSWORD=secret
+      - ORIENTDB_OPTS_MEMORY=-Xms512m -Xmx512m
+      - JAVA_OPTS=-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9450 -Dcom.sun.management.jmxremote.port=9450 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false
+      - ORIENTDB_SETTINGS=-Dstorage.diskCache.bufferSize=2048 -Dmemory.chunk.size=2048 -DridBag.embeddedToSbtreeBonsaiThreshold=-1
+    networks:
+      - cloudnet
+    ports:
+      - 2424:2424
+      - 2480:2480
+      - 9450:9450
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "OrientDB - Distributed Multi-Model and Graph Database"
+
+  influxdb:
+    image: zeelos/influxdb:1.4.3-with-zeelosdb
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+    environment:
+      -  INFLUXDB_HTTP_AUTH_ENABLED=true
+    networks:
+      - cloudnet
+    ports:
+      - 8086:8086
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "InfluxDB - The Platform for Time-Series Data"
+
+  grafana:
+    image: zeelos/grafana:5.0.0-beta1-influx-with-zeelosdb
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=secret
+      - GF_INSTALL_PLUGINS=natel-discrete-panel
+    networks:
+      - cloudnet
+    ports:
+      - 3000:3000
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Grafana - Beautiful metric & analytic dashboards"
+
+volumes:
+  zookeeper-data:
+  zookeeper-log:
+  kafka-data:
+  orientdb-data:
+  influxdb-data:
+  grafana-data:
+
+networks:
+  cloudnet:
+    external:
+      name: cloudnet
+  edgenet:
+    external:
+      name: edgenet_server1

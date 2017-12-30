@@ -1,0 +1,13 @@
+{
+  "config": {
+    "connector.class": "io.confluent.connect.replicator.ReplicatorSourceConnector",
+    "tasks.max": "2",
+    "src.zookeeper.connect": "zookeeper-edge:2171",
+    "src.kafka.bootstrap.servers": "kafka-edge:9082",
+    "dest.zookeeper.connect": "zookeeper-cloud:2181",
+    "topic.whitelist": "server1_registration_new,server1_registration_up,server1_registration_del,server1_management_rep,server1_observation",
+    "key.converter": "io.confluent.connect.replicator.util.ByteArrayConverter",
+    "value.converter": "io.confluent.connect.replicator.util.ByteArrayConverter"
+  },
+  "name": "replicator-server1-gateway-to-cloud"
+ }
