@@ -121,7 +121,7 @@ services:
       - 8083:8083
       - 9584:9584
     deploy:
-      replicas: 2
+      replicas: 1
       placement:
         constraints:
           - node.labels.type == cloud
