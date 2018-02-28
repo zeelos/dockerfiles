@@ -1,4 +1,4 @@
-## Architecure Overview
+## Architecture Overview
 
 ![Zeelos Architecture Diagram](https://image.ibb.co/dF5SNb/Zeelos_Architecture_Diagram.png)
 
@@ -46,17 +46,17 @@
 	
 	When all docker images have been downloaded and started, you should have something like the following:
 	<figure>
-  <img src="http://image.ibb.co/cWwniH/docker_containers.png" alt="Docker Containers"/>
+  <img src="http://image.ibb.co/i5WEVx/docker_containers.png" alt="Docker Containers"/>
   <figcaption>(top)-`zeelos-cloud`, (bottom)-`zeelos-server1`</figcaption>
 </figure>
 
 	
-6. Create a **_'request'_** topic on `zeelos-cloud`. Clients will use that topic to send requests to the edge gateway (topic will be [replicated](https://docs.confluent.io/current/multi-dc/mirrormaker.html) automatically from `zeelos_cloud` to `zeelos-server1` edge) :
+6. Create a **_'request'_** topic on `zeelos-cloud`. Clients will use that topic to send requests to the edge gateway (topic [will be replicated](https://github.com/zeelos/zeelos/blob/master/docker-compose-edge.yml#L116-L141) automatically from `zeelos_cloud` to `zeelos-server1` edge) :
 
 		docker exec -it <kafka-container-id> kafka-topics --create --topic server1_management_req --zookeeper zookeeper-cloud:2181 --partitions 1 --replication-factor 1
 
 
-7. Create **_'registration/response/observation'_** topics on `zeelos-cloud` with partition parameter set according to your requirements (we use 2 here to demonstrate scaling with the Connect framework). [Leshan Server Kafka](https://github.com/zeelos/leshan-server-kafka) running on the edge will use those topics to store all of it's messages (topics would be [replicated](https://docs.confluent.io/current/multi-dc/mirrormaker.html) automatically from `zeelos-server1` edge  to`zeelos_cloud`)
+7. Create **_'registration/response/observation'_** topics on `zeelos-cloud` with partition parameter set according to your requirements (we use 2 here to demonstrate scaling with the Connect framework). [Leshan Server Kafka](https://github.com/zeelos/leshan-server-kafka) running on the edge will use those topics to store all of it's messages (topics [would be replicated](https://github.com/zeelos/zeelos/blob/master/docker-compose-cloud.yml#L159-L184) automatically from `zeelos-server1` edge to `zeelos_cloud`)
 
 	> NOTE:
 	> On `zeelos-server1` edge, topics are set to be created automatically by the Kafka configuration with default partition number set to 1. According to your needs on the edge and its hardware characteristics (e.g if you use multiple kafka stream instances), you can choose to override by setting the appropriate configuration option in the `docker-compose-edge.yml`
@@ -179,7 +179,6 @@
 		{"serverId": "server1", "ep": "<endpoint_id>", "ticket": "ticket#3", "payload": {"kind": "read", "path": "/3/0/1", "contentFormat": "TLV", "body": null}}
 		# boolean type
 		{"serverId": "server1", "ep": "<endpoint_id>", "ticket": "ticket#3", "payload": {"kind": "read", "path": "/1/0/6", "contentFormat": "TLV", "body": null}}
-
 	        
 	    --"write" request--
 	    {"serverId": "server1", "ep": "<endpoint_id>", "ticket": "ticket#4", "payload": {"kind": "write", "path": "/1/0/6", "contentFormat": "TLV", "body":{"io.zeelos.leshan.avro.request.AvroWriteRequest":{"mode":"REPLACE", "node":{"io.zeelos.leshan.avro.model.AvroResource":{"id":6,"path":"/1/0/6","kind":"SINGLE_RESOURCE","type":"BOOLEAN","value":{"boolean":true}}}}}}}
