@@ -199,7 +199,7 @@ services:
       io.zeelos.role: "Landoop Fast Data Tools - kafka-topics-ui, schema-registry-ui, kafka-connect-ui"
 
   orientdb:
-    image: zeelos/orientdb:3.0.0RC1-with-zeelosdb
+    image: zeelos/orientdb:3.0.0RC2-with-zeelosdb
     volumes:
       - orientdb-data:/orientdb/databases
     environment:
