@@ -85,7 +85,7 @@
 
 9. Start a [virtual sensor client demo](https://github.com/zeelos/leshan-client-demo) that will attach on the Leshan server running at the edge:
 
-		docker service create --name leshan-client-demo-1 --network edgenet_server1 --constraint "node.labels.type == cloud" -e JAVA_OPTS="-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=8000 -Dcom.sun.management.jmxremote.port=8000 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xmx32M -Xms32M" zeelos/leshan-client-demo:0.1-SNAPSHOT -u leshan-server-kafka
+		docker service create --name leshan-client-demo-1 --network edgenet_server1 --constraint "node.labels.type == cloud" -p 8000:8000 -e JAVA_OPTS="-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=8000 -Dcom.sun.management.jmxremote.port=8000 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xmx32M -Xms32M" zeelos/leshan-client-demo:0.1-SNAPSHOT -u leshan-server-kafka
 		
 	> NOTE:
 	> We strive to enable JMX on all Java running services to aid with monitoring. If you inspect the docker-compose files for cloud and edge you will see that JMX is enabled by default. You can then use your favourite tool to inspect the JVM (e.g. [VisualVM](https://visualvm.github.io)). Since the service is running inside docker (and possible docker-machine), to simplify configuration, the hostname we bound the service is `localhost` so you need to use an ssh tunnel to connect to (this also gives an advantage to avoid arbitrarily JMX connections from outside and only allow through SSH tunnel).
@@ -119,7 +119,7 @@
 
 	![OrientDB](https://image.ibb.co/cCM15Q/orientdb.png)
 
-	Click on an endpoint and notice the left pane will contain it's propertes (e.g. last registration update, binding mode etc):
+	Click on an endpoint and notice the left pane will contain it's properties (e.g. last registration update, binding mode etc):
 	
 	![OrientDB-props](http://image.ibb.co/cmZbAx/orientdb_properties.png)
 	
@@ -158,11 +158,11 @@
 
 17. Make some requests against the `zeelos-server1` Leshan Server. Notice that clients invoke them on the central `zeelos-cloud` and the request get's propagated on the edge using [replication](https://docs.confluent.io/current/multi-dc/mirrormaker.html) and back. 
 
-	First subscribe to the reponse topic to view the reply of your request:
+	First subscribe to the reponse topic `server1_management_rep` to view the reply of your request:
 
 		docker exec -it <kafka-container-id> kafka-avro-console-consumer --topic server1_management_rep --bootstrap-server kafka-cloud:9092 --property schema.registry.url=http://schema-registry-cloud:8081
 		
-	Now issue commands by producing messages to the request topic:
+	Now issue commands by producing messages to the request topic `server1_management_req`:
 	
 		docker exec -it <kafka-container-id> kafka-avro-console-producer --topic server1_management_req --property value.schema="$(< ./schemas/request-schema.json)" --broker-list kafka-cloud:9092 --property schema.registry.url=http://schema-registry-cloud:8081
 
@@ -192,6 +192,19 @@
 	
 	>requests can target both an "object" (e.g /3), an "object instance" (e.g 3/0), or a specific "resource" (e.g /3/0/1).
 
+## Protocol Adapters
+
+Although [Lightweight M2M](http://openmobilealliance.org/iot/lightweight-m2m-lwm2m) is a feature rich protocol that can serve the needs and requirements for many IoT projects ([the specification](http://www.openmobilealliance.org/release/LightweightM2M/V1_0-20170208-A/OMA-TS-LightweightM2M-V1_0-20170208-A.pdf) is easy to read), understandable there are many legacy protocols already deployed in industrial environments that need to supported. Fortunately enough, the flexible design of LWM2M allows routing of many existing protocols. As a matter of fact, we created a [Modbus](https://en.wikipedia.org/wiki/Modbus) adapter that showcase this functionality (with an [OPC-UA](https://en.wikipedia.org/wiki/OPC_Unified_Architecture) adapter currently in the works). Supporting existing protocols is an important feature and the Open Mobile Alliance is currently working to standarize the process with the [upcoming v1.1 spec](http://www.openmobilealliance.org/release/LightweightM2M/V1_1-20171208-C/OMA-RD-LightweightM2M-V1_1-20171208-C.pdf) (check the `LwM2M Gateway functionality` section) something we are looking forward to support when available.
+
+### Modbus to LWM2M
+
+A protocol adapter has been created that translates LWM2M protocol messages to Modbus and back. Please have a look at the [project page](https://github.com/zeelos/leshan-client-modbus) for  more information. 
+
+
+
+### OPC-UA to LWM2M
+> currently in progress
+
 ## front-ends
 
 [Landoop UI](http://192.168.99.100) (Kafka cluster introspection from [Landoop](http://www.landoop.com/))
@@ -202,8 +215,8 @@
 
 [OrientDB](http://192.168.99.100:2480) (Model Visualisation)
 
-> username:_root_, password:_secret_
-(for Grafana username is _admin_)
+> for all services use credentials **username:**`root`, **password**:`secret`
+(except for Grafana where username is `admin`)
 
 ## Note about Replication
 
