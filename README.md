@@ -1,6 +1,6 @@
 ## Architecture Overview
 
-![Zeelos Architecture Diagram](https://image.ibb.co/dF5SNb/Zeelos_Architecture_Diagram.png)
+![Zeelos Architecture Diagram](http://image.ibb.co/g5pgk7/Zeelos_Architecture_Diagram_Edge.png)
 
 ## Setup
 
