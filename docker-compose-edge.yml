@@ -141,7 +141,7 @@ services:
       io.zeelos.role: "Kafka MirrorMaker - A stand-alone tool for copying data between two Apache Kafka clusters"
 
   leshan-server-kafka:
-    image: zeelos/leshan-server-kafka:0.1-SNAPSHOT
+    image: zeelos/leshan-server-kafka:0.2-SNAPSHOT
     volumes:
       - leshan-server-data:/opt/leshan-server-kafka
     environment:

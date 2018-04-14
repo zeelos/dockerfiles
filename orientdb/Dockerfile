@@ -1,4 +1,4 @@
-FROM orientdb:3.0.0RC2
+FROM orientdb:3.0.0
 MAINTAINER zeelos.io - https://zeelos.io
 
 # initialize orientdb with 'zeelosdb' database

@@ -1,7 +1,7 @@
 FROM confluentinc/cp-kafka-connect:4.0.0
 MAINTAINER zeelos.io - https://zeelos.io
 
-ENV LESHAN_DRIVER_VERSION 0.1-SNAPSHOT
+ENV LESHAN_DRIVER_VERSION 0.2-SNAPSHOT
 ENV TRANSFORMS_CONNECT_TRANSFORM 0.1-SNAPSHOT
 
 ENV STREAM_REACTOR_VERSION 1.0.0
@@ -16,7 +16,7 @@ ENV INFLUXDB_DRIVER_VERSION 1.0.0
 
 #----remove once released----
 RUN mkdir -p /opt/connectors && \
-    curl -k -SL "https://www.dropbox.com/s/ssdj9dcwezi7ivg/kafka-connect-leshan-asset-0.1-SNAPSHOT-standalone.jar?dl=1" -o /opt/connectors/leshan-asset.jar && \
+    curl -k -SL "https://www.dropbox.com/s/91aq8os1wctufkz/kafka-connect-leshan-asset-0.2-SNAPSHOT-standalone.jar?dl=1" -o /opt/connectors/leshan-asset.jar && \
     curl -k -SL "https://github.com/datamountaineer/stream-reactor/releases/download/${STREAM_REACTOR_VERSION}/kafka-connect-influxdb-${STREAM_REACTOR_VERSION}-${INFLUXDB_DRIVER_VERSION}-all.tar.gz" \
         | tar -xzf - -C /opt/connectors/
 

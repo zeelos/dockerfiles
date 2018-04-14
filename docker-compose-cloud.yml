@@ -84,7 +84,7 @@ services:
       io.zeelos.role: "Schema Registry - Schema registry for Apache Kafka"
 
   kafka-connect-cloud:
-    image: zeelos/kafka-connect-leshan-influxdb:0.1-SNAPSHOT
+    image: zeelos/kafka-connect-leshan-influxdb:0.2-SNAPSHOT
     environment:
       - CONNECT_BOOTSTRAP_SERVERS=kafka-cloud:9092
       - CONNECT_GROUP_ID=zeelos-connect-group
@@ -199,7 +199,7 @@ services:
       io.zeelos.role: "Landoop Fast Data Tools - kafka-topics-ui, schema-registry-ui, kafka-connect-ui"
 
   orientdb:
-    image: zeelos/orientdb:3.0.0RC2-with-zeelosdb
+    image: zeelos/orientdb:3.0.0-with-zeelosdb
     volumes:
       - orientdb-data:/orientdb/databases
     environment:
