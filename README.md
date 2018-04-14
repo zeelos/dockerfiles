@@ -4,7 +4,7 @@
 
 ## Setup
 
-1. Create `zeelos-cloud` vm machine:
+1. Create `zeelos-cloud` vm machine and initialize docker swarm cluster:
 
 		docker-machine create --driver virtualbox --virtualbox-memory 8192 zeelos-cloud
 		docker-machine ssh zeelos-cloud "docker swarm init --advertise-addr <zeelos-cloud-vm ip>"
@@ -85,7 +85,7 @@
 
 9. Start a [virtual sensor client demo](https://github.com/zeelos/leshan-client-demo) that will attach on the Leshan server running at the edge:
 
-		docker service create --name leshan-client-demo-1 --network edgenet_server1 --constraint "node.labels.type == cloud" -p 8000:8000 -e JAVA_OPTS="-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=8000 -Dcom.sun.management.jmxremote.port=8000 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xmx32M -Xms32M" zeelos/leshan-client-demo:0.1-SNAPSHOT -u leshan-server-kafka
+		docker service create --name leshan-client-demo-1 --network edgenet_server1 --constraint "node.labels.type == cloud" -p 8000:8000 -e JAVA_OPTS="-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=8000 -Dcom.sun.management.jmxremote.port=8000 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Xmx32M -Xms32M" zeelos/leshan-client-demo:0.2-SNAPSHOT -u leshan-server-kafka
 		
 	> NOTE:
 	> We strive to enable JMX on all Java running services to aid with monitoring. If you inspect the docker-compose files for cloud and edge you will see that JMX is enabled by default. You can then use your favourite tool to inspect the JVM (e.g. [VisualVM](https://visualvm.github.io)). Since the service is running inside docker (and possible docker-machine), to simplify configuration, the hostname we bound the service is `localhost` so you need to use an ssh tunnel to connect to (this also gives an advantage to avoid arbitrarily JMX connections from outside and only allow through SSH tunnel).
@@ -134,11 +134,11 @@
 
 15. Start some [Kafka Streams Analytics](https://github.com/zeelos/kafka-streams-leshan) that will run at the edge (notice the  `--constraint` parameter that explicitly specifies the edge node). [The first analytic](https://github.com/zeelos/kafka-streams-leshan/blob/master/src/main/java/io/zeelos/leshan/kafka/streams/SimpleAnalyticsStreamsApp.java#L73-L98) aggregates sensor readings by '`endpoint id`' and by '`endpoint id`' and '`path`' per minute and outputs the result in the console. Use `docker logs -f <container_id>` to watch it's output:
 
-		docker service create --name kstreams-aggregate --network edgenet_server1 --constraint "node.labels.type == server1" -p 9000:9000 -e JAVA_OPTS="-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9000 -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false" zeelos/kafka-streams-leshan:0.1-SNAPSHOT io.zeelos.leshan.kafka.streams.SimpleAnalyticsStreamsApp kafka-edge:9082 http://schema-registry-edge:8071
+		docker service create --name kstreams-aggregate --network edgenet_server1 --constraint "node.labels.type == server1" -p 9000:9000 -e JAVA_OPTS="-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9000 -Dcom.sun.management.jmxremote.port=9000 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false" zeelos/kafka-streams-leshan:0.2-SNAPSHOT io.zeelos.leshan.kafka.streams.SimpleAnalyticsStreamsApp kafka-edge:9082 http://schema-registry-edge:8071
 
 	[The second analytic](https://github.com/zeelos/kafka-streams-leshan/blob/master/src/main/java/io/zeelos/leshan/kafka/streams/TemperatureStreamsApp.java#L95-L120) calculates the maximum temperature of the incoming observations grouped by '`endpoint id`' and '`path`' over a period of 30 secs and outputs the result in the `server1_observation_maxper30sec` topic:
 	
-		docker service create --name kstreams-temperature --network edgenet_server1 --constraint "node.labels.type == server1" -p 9001:9001 -e JAVA_OPTS="-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9001 -Dcom.sun.management.jmxremote.port=9001 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false" zeelos/kafka-streams-leshan:0.1-SNAPSHOT io.zeelos.leshan.kafka.streams.TemperatureStreamsApp kafka-edge:9082 http://schema-registry-edge:8071
+		docker service create --name kstreams-temperature --network edgenet_server1 --constraint "node.labels.type == server1" -p 9001:9001 -e JAVA_OPTS="-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9001 -Dcom.sun.management.jmxremote.port=9001 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false" zeelos/kafka-streams-leshan:0.2-SNAPSHOT io.zeelos.leshan.kafka.streams.TemperatureStreamsApp kafka-edge:9082 http://schema-registry-edge:8071
 		
 	> The output of the analytic resides on `server1_observation_maxper30sec` topic at `zeelos-server1` edge. Already, replication [has been configured](https://github.com/zeelos/zeelos/blob/master/docker-compose-cloud.yml#L162) for all edge topics starting with prefix `server1_*` except the `server1_management_req`. Start a consumer to watch the output of the analytic as it propagates from the edge to the cloud :
 	
