@@ -240,7 +240,7 @@ services:
       io.zeelos.role: "InfluxDB - The Platform for Time-Series Data"
 
   grafana:
-    image: zeelos/grafana:5.0.3-influx-with-zeelosdb
+    image: zeelos/grafana:5.0.4-influx-with-zeelosdb
     volumes:
       - grafana-data:/var/lib/grafana
     environment:
