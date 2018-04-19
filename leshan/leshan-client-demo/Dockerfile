@@ -1,14 +1,10 @@
 FROM java:openjdk-8-jdk
 MAINTAINER zeelos.io - https://zeelos.io
 
-ENV LESHAN_CLIENT_DEMO_VERSION 0.2-SNAPSHOT
+ENV LESHAN_CLIENT_DEMO_VERSION 0.1-SNAPSHOT
 
-######RUN mkdir -p /opt/leshan-client-demo && \
-######curl -k -SL -o /opt/leshan-client-demo/leshan-client-demo.jar https://github.com/zeelos/leshan-client-demo/releases/download/v${LESHAN_CLIENT_DEMO_VERSION}/leshan-server-kafka-${LESHAN_CLIENT_DEMO_VERSION}-jar-with-dependencies.jar
-
-#----remove once released----
 RUN mkdir -p /opt/leshan-client-demo && \
-    curl -k -SL -o /opt/leshan-client-demo/leshan-client-demo.jar https://www.dropbox.com/s/s7w1ikz445fo2jc/leshan-client-demo-0.2-SNAPSHOT-jar-with-dependencies.jar?dl=1
+    curl -k -SL "https://github.com/zeelos/leshan-client-demo/releases/download/v${LESHAN_CLIENT_DEMO_VERSION}/leshan-client-demo-${LESHAN_CLIENT_DEMO_VERSION}-jar-with-dependencies.jar" -o /opt/leshan-client-demo/leshan-client-demo.jar
 
 WORKDIR /opt/leshan-client-demo
 

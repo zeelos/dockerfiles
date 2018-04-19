@@ -6,7 +6,7 @@ version: '3'
 services:
 
   zookeeper-edge:
-    image: confluentinc/cp-zookeeper:4.0.0
+    image: confluentinc/cp-zookeeper:4.1.0
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
       - zookeeper-log:/var/lib/zookeeper/log
@@ -31,7 +31,7 @@ services:
       io.zeelos.role: "ZooKeeper - An open-source server which enables highly reliable distributed coordination"
 
   kafka-edge:
-    image: confluentinc/cp-kafka:4.0.0
+    image: confluentinc/cp-kafka:4.1.0
     volumes:
       - kafka-data:/var/lib/kafka/data
     environment:
@@ -60,7 +60,7 @@ services:
       io.zeelos.role: "Kafka - A distributed streaming platform"
 
   schema-registry-edge:
-    image: confluentinc/cp-schema-registry:4.0.0
+    image: confluentinc/cp-schema-registry:4.1.0
     environment:
       - SCHEMA_REGISTRY_HOST_NAME=schema-registry-edge
       - SCHEMA_REGISTRY_LISTENERS=http://0.0.0.0:8071
@@ -87,7 +87,7 @@ services:
       io.zeelos.role: "Schema Registry - Schema registry for Apache Kafka"
 
   kafka-rest-edge:
-    image: confluentinc/cp-kafka-rest:4.0.0
+    image: confluentinc/cp-kafka-rest:4.1.0
     environment:
       - KAFKA_REST_HOST_NAME=kafka-rest-edge
       - KAFKA_REST_LISTENERS=http://0.0.0.0:8072
@@ -141,7 +141,7 @@ services:
       io.zeelos.role: "Kafka MirrorMaker - A stand-alone tool for copying data between two Apache Kafka clusters"
 
   leshan-server-kafka:
-    image: zeelos/leshan-server-kafka:0.2-SNAPSHOT
+    image: zeelos/leshan-server-kafka:0.1-SNAPSHOT
     volumes:
       - leshan-server-data:/opt/leshan-server-kafka
     environment:

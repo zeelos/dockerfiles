@@ -1,6 +1,6 @@
 var runningServices = [
   {
-    "name" : "Confluent OSS v4.0.0 - Kafka v1.0.0",
+    "name" : "Confluent OSS v4.1.0 - Kafka v1.1.0",
     "description" : "2× Broker, 2× Schema Registry, 2× Connect Distributed Worker, 2× REST Proxy, 2× Zookeeper, 2x MirrorMaker"
   },
   {

@@ -22,9 +22,7 @@ RUN apk add --no-cache \
 RUN mkdir /usr/share/landoop
 
 # Add and Setup Schema-Registry-Ui
-#ARG SCHEMA_REGISTRY_UI_URL="https://github.com/zeelos/schema-registry-ui/releases/download/v.0.9.4-zeelos/schema-registry-ui-0.9.4-zeelos.tar.gz"
-#----remove once released----
-ARG SCHEMA_REGISTRY_UI_URL="https://www.dropbox.com/s/a34b1kitkpphaiu/schema-registry-ui-0.9.4-zeelos.tar.gz?dl=1"
+ARG SCHEMA_REGISTRY_UI_URL="https://github.com/zeelos/schema-registry-ui/releases/download/v.0.9.4-zeelos/schema-registry-ui-0.9.4-zeelos.tar.gz"
 RUN wget "$SCHEMA_REGISTRY_UI_URL" -O /schema-registry-ui.tar.gz \
     && mkdir -p /var/www/schema-registry-ui \
     && tar xzf /schema-registry-ui.tar.gz -C /var/www/schema-registry-ui \
@@ -32,7 +30,7 @@ RUN wget "$SCHEMA_REGISTRY_UI_URL" -O /schema-registry-ui.tar.gz \
 COPY web/registry-ui-env.js /var/www/schema-registry-ui/env.js
 
 # Add and Setup Kafka-Topics-Ui
-ARG KAFKA_TOPICS_UI_URL="https://github.com/Landoop/kafka-topics-ui/releases/download/v0.9.3/kafka-topics-ui-0.9.3.tar.gz"
+ARG KAFKA_TOPICS_UI_URL="https://github.com/zeelos/kafka-topics-ui/releases/download/v.0.9.3-zeelos/kafka-topics-ui-0.9.3-zeelos.tar.gz"
 RUN wget "$KAFKA_TOPICS_UI_URL" -O /kafka-topics-ui.tar.gz \
     && mkdir /var/www/kafka-topics-ui \
     && tar xzf /kafka-topics-ui.tar.gz -C /var/www/kafka-topics-ui \
@@ -40,10 +38,7 @@ RUN wget "$KAFKA_TOPICS_UI_URL" -O /kafka-topics-ui.tar.gz \
 COPY web/topics-ui-env.js /var/www/kafka-topics-ui/env.js
 
 # Add and Setup Kafka-Connect-UI (Note: branch on 'zeelos' for the extra connectors)
-#ARG KAFKA_CONNECT_UI_URL="https://github.com/zeelos/kafka-connect-ui/releases/download/v.0.9.4-zeelos-leshan/kafka-connect-ui-0.9.4-zeelos-leshan.tar.gz"
-#----remove once released----
-ARG KAFKA_CONNECT_UI_URL="https://www.dropbox.com/s/5wqm6j5x70fknlz/kafka-connect-ui-0.9.4-zeelos-leshan.tar.gz?dl=1"
-
+ARG KAFKA_CONNECT_UI_URL="https://github.com/zeelos/kafka-connect-ui/releases/download/v.0.9.4-zeelos-leshan/kafka-connect-ui-0.9.4-zeelos-leshan.tar.gz"
 RUN wget "$KAFKA_CONNECT_UI_URL" -O /kafka-connect-ui.tar.gz \
     && mkdir /var/www/kafka-connect-ui \
     && tar xzf /kafka-connect-ui.tar.gz -C /var/www/kafka-connect-ui \
