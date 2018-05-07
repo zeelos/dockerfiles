@@ -1,5 +1,5 @@
-FROM grafana/grafana:5.0.4
+FROM grafana/grafana:5.1.0
 MAINTAINER zeelos.io - https://zeelos.io
 
 # initialize with 'zeelosdb' datasource plus a demo dashboard.
-COPY ./grafana.db /var/lib/grafana
+COPY --chown=grafana:grafana ./grafana.db /var/lib/grafana
