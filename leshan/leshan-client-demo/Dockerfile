@@ -1,4 +1,4 @@
-FROM java:openjdk-8-jdk
+FROM zeelos/zulu-openjdk-debian:8u172-8.30.0.1
 MAINTAINER zeelos.io - https://zeelos.io
 
 ENV LESHAN_CLIENT_DEMO_VERSION 0.1-SNAPSHOT
