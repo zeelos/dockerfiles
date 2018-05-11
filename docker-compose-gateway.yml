@@ -6,7 +6,7 @@ version: '3.6'
 services:
 
   zookeeper-gateway:
-    image: confluentinc/cp-zookeeper:4.1.1
+    image: zeelos/cp-zookeeper:4.1.1-arm64v8
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
       - zookeeper-log:/var/lib/zookeeper/log
@@ -19,7 +19,7 @@ services:
       - KAFKA_JMX_PORT=9575
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                        -Dcom.sun.management.jmxremote.ssl=false
-      - KAFKA_HEAP_OPTS=-Xmx256M -Xms256M
+      - KAFKA_HEAP_OPTS=-Xmx64M -Xms64M
     networks:
       - gateway
       - monnet
@@ -45,7 +45,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-gateway:
-    image: confluentinc/cp-kafka:4.1.1
+    image: zeelos/cp-kafka:4.1.1-arm64v8
     volumes:
       - kafka-data:/var/lib/kafka/data
     environment:
@@ -105,7 +105,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   schema-registry-gateway:
-    image: confluentinc/cp-schema-registry:4.1.1
+    image: zeelos/cp-schema-registry:4.1.1-arm64v8
     environment:
       - SCHEMA_REGISTRY_HOST_NAME=schema-registry-${GATEWAY_ID}
       - SCHEMA_REGISTRY_LISTENERS=https://0.0.0.0:8071
@@ -114,7 +114,7 @@ services:
       - SCHEMA_REGISTRY_SCHEMA_REGISTRY_GROUP_ID=zeelos
       - SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
       - SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN=*
-      - SCHEMA_REGISTRY_HEAP_OPTS=-Xmx256M -Xms256M
+      - SCHEMA_REGISTRY_HEAP_OPTS=-Xmx64M -Xms64M
       - SCHEMA_REGISTRY_JMX_HOSTNAME=localhost
       - SCHEMA_REGISTRY_JMX_PORT=9572
       - SCHEMA_REGISTRY_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
@@ -159,7 +159,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-rest-gateway:
-    image: confluentinc/cp-kafka-rest:4.1.1
+    image: zeelos/cp-kafka-rest:4.1.1-arm64v8
     environment:
       - KAFKA_REST_HOST_NAME=kafka-rest-gateway
       - KAFKA_REST_LISTENERS=https://0.0.0.0:8072
@@ -211,7 +211,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-mirrormaker-gateway:
-    image: zeelos/kafka-mirrormaker:4.1.1
+    image: zeelos/kafka-mirrormaker:4.1.1-arm64v8
     environment:
       - MIRRORMAKER_WHITE_LIST=^iot.${GATEWAY_ID}.management.req
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
@@ -221,7 +221,7 @@ services:
       - CONSUMER_GROUP_ID=mirrormaker_edge_${GATEWAY_ID}
       - CONSUMER_AUTO_OFFSET_RESET=earliest
       - PRODUCER_BOOTSTRAP_SERVERS=kafka-gateway:9082
-      - KAFKA_HEAP_OPTS=-Xmx256M -Xms256M
+      - KAFKA_HEAP_OPTS=-Xmx64M -Xms64M
       - KAFKA_JMX_HOSTNAME=localhost
       - KAFKA_JMX_PORT=9564
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
@@ -321,7 +321,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   leshan-server-kafka-gateway:
-    image: zeelos/leshan-server-kafka:0.1-SNAPSHOT
+    image: zeelos/leshan-server-kafka:0.1-SNAPSHOT-arm64v8
     volumes:
       - leshan-server-data:/opt/leshan-server-kafka
     environment:

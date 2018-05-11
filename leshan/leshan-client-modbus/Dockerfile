@@ -1,4 +1,4 @@
-FROM zeelos/zulu-openjdk-debian:8u172-8.30.0.1
+FROM zeelos/zulu-openjdk-debian:8u162-8.27.0.91-arm64v8
 MAINTAINER zeelos.io - https://zeelos.io
 
 ENV LESHAN_CLIENT_MODBUS_VERSION 0.1-SNAPSHOT

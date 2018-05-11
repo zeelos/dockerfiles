@@ -1,7 +1,7 @@
-FROM debian:stretch
+FROM arm64v8/debian:stretch
 
 # Zulu
-ENV ZULU_OPENJDK_VERSION=8=8.30.0.1
+ENV ZULU_OPENJDK_VERSION="ezdk-1.8.0_162-8.27.0.91-eval-linux_aarch64"
 
 # This affects how strings in Java class files are interpreted.  We want UTF-8 and this is the only locale in the base image that supports it
 ENV LANG="C.UTF-8"
@@ -17,8 +17,8 @@ RUN echo "===> Updating debian ....." \
                 wget \
                 netcat \
 	&& echo "===> Installing Zulu OpenJDK ${ZULU_OPENJDK_VERSION}" \
-    && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0x219BD9C9 \
-    && echo "deb http://repos.azulsystems.com/debian stable  main" >> /etc/apt/sources.list.d/zulu.list \
-    && apt-get -qq update \
-    && apt-get -y install zulu-${ZULU_OPENJDK_VERSION} \
-    && rm -rf /var/lib/apt/lists/*
+    && mkdir /usr/lib/jvm \
+    && wget -qO- http://cdn.azul.com/zulu-embedded/bin/${ZULU_OPENJDK_VERSION}.tar.gz | tar xvz -C /usr/lib/jvm \
+    && update-alternatives --install /usr/bin/java java /usr/lib/jvm/${ZULU_OPENJDK_VERSION}/bin/java 100 \
+    && update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/${ZULU_OPENJDK_VERSION}/bin/javac 100 \
+    && update-alternatives --install /usr/bin/jar jar /usr/lib/jvm/${ZULU_OPENJDK_VERSION}/bin/jar 100
