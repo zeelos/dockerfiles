@@ -401,6 +401,8 @@ secrets:
     file: ./security/kafka.client-edge.truststore.jks
   client_security_cloud.properties:
     file: ./security/client_security_cloud.properties
+  client_security_edge.properties:
+    file: ./security/client_security_edge.properties
 
 volumes:
   zookeeper-data:
