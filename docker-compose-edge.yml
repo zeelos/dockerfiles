@@ -67,8 +67,6 @@ services:
         target: /etc/kafka/secrets/kafka.kafka-edge.truststore.jks
       - source: kafka-edge_truststore_creds
         target: /etc/kafka/secrets/kafka-edge_truststore_creds
-      - source: client_security_edge.properties
-        target: /etc/kafka/secrets/client_security_edge.properties
     networks:
       - edgenet
       - cloudnet
@@ -184,7 +182,7 @@ services:
     environment:
       - MIRRORMAKER_WHITE_LIST=^server1_management_req
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
-      - MIRRORMAKER_OFFSET_COMMIT_INTERVAL=60000
+      - MIRRORMAKER_OFFSET_COMMIT_INTERVAL_MS=60000
       - MIRRORMAKER_NUM_STREAMS=1
       - CONSUMER_BOOTSTRAP_SERVERS=kafka-cloud:9092
       - CONSUMER_GROUP_ID=mirrormaker_server1
@@ -201,9 +199,9 @@ services:
       - PRODUCER_SSL_KEYSTORE_PASSWORD=itsasecret
       - PRODUCER_SSL_KEY_PASSWORD=itsasecret
       - CONSUMER_SECURITY_PROTOCOL=SSL
-      - CONSUMER_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.client-edge.truststore.jks
+      - CONSUMER_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.client-cloud.truststore.jks
       - CONSUMER_SSL_TRUSTSTORE_PASSWORD=itsasecret
-      - CONSUMER_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.client-edge.keystore.jks
+      - CONSUMER_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.client-cloud.keystore.jks
       - CONSUMER_SSL_KEYSTORE_PASSWORD=itsasecret
       - CONSUMER_SSL_KEY_PASSWORD=itsasecret
     secrets:
@@ -211,8 +209,14 @@ services:
         target: /etc/kafka/secrets/kafka.client-edge.keystore.jks
       - source: kafka.client-edge.truststore.jks
         target: /etc/kafka/secrets/kafka.client-edge.truststore.jks
+      - source: kafka.client-cloud.keystore.jks
+        target: /etc/kafka/secrets/kafka.client-cloud.keystore.jks
+      - source: kafka.client-cloud.truststore.jks
+        target: /etc/kafka/secrets/kafka.client-cloud.truststore.jks
       - source: client_security_edge.properties
         target: /etc/kafka/secrets/client_security_edge.properties
+      - source: client_security_cloud.properties
+        target: /etc/kafka/secrets/client_security_cloud.properties
     networks:
       - edgenet
       - cloudnet

@@ -289,6 +289,8 @@ services:
         target: /etc/kafka/secrets/kafka.client-edge.truststore.jks
       - source: client_security_cloud.properties
         target: /etc/kafka/secrets/client_security_cloud.properties
+      - source: client_security_edge.properties
+        target: /etc/kafka/secrets/client_security_edge.properties
     networks:
       - cloudnet
       - edgenet
