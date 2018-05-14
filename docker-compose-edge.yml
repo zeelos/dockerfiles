@@ -292,6 +292,10 @@ secrets:
     file: ./security/kafka.client-edge.keystore.jks
   kafka.client-edge.truststore.jks:
     file: ./security/kafka.client-edge.truststore.jks
+  kafka.client-cloud.keystore.jks:
+    file: ./security/kafka.client-cloud.keystore.jks
+  kafka.client-cloud.truststore.jks:
+    file: ./security/kafka.client-cloud.truststore.jks
   client_security_edge.properties:
     file: ./security/client_security_edge.properties
   client_security_cloud.properties:
