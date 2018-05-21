@@ -1,0 +1,108 @@
+# zeelos - edge - monitoring
+# MAINTAINER zeelos.io - https://zeelos.io
+
+version: '3.6'
+
+services:
+
+  cadvisor-edge:
+    image: google/cadvisor:v0.29.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock,readonly
+      - /:/rootfs
+      - /var/run:/var/run
+      - /sys:/sys
+      - /var/lib/docker/:/var/lib/docker
+    networks:
+      - edgenet
+    ports:
+      - 8091:8080
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.type == server1
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "cAdvisor - Analyzes resource usage and performance characteristics of running containers"
+
+  node-exporter-edge:
+    image: zeelos/node_exporter:v0.16.0
+    environment:
+      - NODE_ID={{.Node.ID}}
+      - NODE_NAME=zeelos-edge
+    networks:
+      - edgenet
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
+      - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
+      - '--collector.textfile.directory=/etc/node-exporter/'
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.type == server1
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "node-exporter - Exporter for machine metrics"
+
+  docker-exporter-edge:
+    image: basi/socat:v0.1.0
+    environment:
+      - IN=172.17.0.1:9323
+      - OUT=9323
+    networks:
+      - edgenet
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.labels.type == server1
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "docker-exporter - Provides the possibility of cat a TCP connection to a defined PORT"
+
+  kafka-exporter-edge:
+    image: danielqsj/kafka-exporter:v1.1.0
+    secrets:
+      - source: client-edge.certificate.pem
+        target: /etc/kafka/secrets/client-edge.certificate.pem
+      - source: client-edge.key
+        target: /etc/kafka/secrets/client-edge.key
+    networks:
+      - edgenet
+    command:
+      - '--kafka.server=kafka-edge:9082'
+      - '--web.listen-address=:8080'
+      - '--tls.enabled'
+      - '--tls.cert-file=/etc/kafka/secrets/client-edge.certificate.pem'
+      - '--tls.key-file=/etc/kafka/secrets/client-edge.key'
+      - '--tls.insecure-skip-tls-verify'
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == server1
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Kafka Exporter - Kafka exporter for Prometheus (non-jmx)"
+
+secrets:
+  client-edge.certificate.pem:
+    file: ./security/client-edge.certificate.pem
+  client-edge.key:
+    file: ./security/client-edge.key
+
+volumes:
+  prometheus-data:
+  alertmanager-data:
+
+networks:
+  edgenet:
+    external: true
+    name: edgenet_server1

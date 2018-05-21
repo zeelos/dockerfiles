@@ -1,7 +1,7 @@
 # zeelos - cloud
 # MAINTAINER zeelos.io - https://zeelos.io
 
-version: '3.1'
+version: '3.6'
 
 services:
 
@@ -14,6 +14,7 @@ services:
       - ZOOKEEPER_SERVER_ID=1
       - ZOOKEEPER_CLIENT_PORT=2181
       - ZOOKEEPER_TICK_TIME=2000
+      - KAFKA_OPTS=-javaagent:/etc/kafka/prometheus/jmx_prometheus_javaagent.jar=8080:/etc/kafka/prometheus/jmx-exporter-zookeeper-config.yml
       - KAFKA_JMX_HOSTNAME=localhost
       - KAFKA_JMX_PORT=9585
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
@@ -24,6 +25,11 @@ services:
     ports:
       - 2181:2181
       - 9585:9585
+    configs:
+      - source: kafka.jmx-exporter-javaagent-jar
+        target: /etc/kafka/prometheus/jmx_prometheus_javaagent.jar
+      - source: kafka.jmx-exporter-zookeeper-config
+        target: /etc/kafka/prometheus/jmx-exporter-zookeeper-config.yml
     deploy:
       placement:
         constraints:
@@ -40,6 +46,7 @@ services:
       - KAFKA_BROKER_ID=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper-cloud:2181
       - KAFKA_ADVERTISED_LISTENERS=SSL://kafka-cloud:9092
+      - KAFKA_OPTS=-javaagent:/etc/kafka/prometheus/jmx_prometheus_javaagent.jar=8080:/etc/kafka/prometheus/jmx-exporter-kafka-config.yml
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
       - KAFKA_JMX_HOSTNAME=localhost
@@ -54,6 +61,11 @@ services:
       - KAFKA_SSL_TRUSTSTORE_CREDENTIALS=kafka-cloud_truststore_creds
       - KAFKA_SSL_CLIENT_AUTH=required
       - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:HTTPS
+    configs:
+      - source: kafka.jmx-exporter-javaagent-jar
+        target: /etc/kafka/prometheus/jmx_prometheus_javaagent.jar
+      - source: kafka.jmx-exporter-kafka-config
+        target: /etc/kafka/prometheus/jmx-exporter-kafka-config.yml
     secrets:
       - source: kafka.kafka-cloud.keystore.jks
         target: /etc/kafka/secrets/kafka.kafka-cloud.keystore.jks
@@ -256,7 +268,7 @@ services:
     environment:
       - MIRRORMAKER_WHITE_LIST=^server1_((?!req).)*$$
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
-      - MIRRORMAKER_OFFSET_COMMIT_INTERVAL=60000
+      - MIRRORMAKER_OFFSET_COMMIT_INTERVAL_MS=60000
       - MIRRORMAKER_NUM_STREAMS=1
       - CONSUMER_BOOTSTRAP_SERVERS=kafka-edge:9082
       - CONSUMER_GROUP_ID=mirrormaker_server1
@@ -368,6 +380,14 @@ services:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Grafana - Beautiful metric & analytic dashboards"
 
+configs:
+  kafka.jmx-exporter-javaagent-jar:
+    file: ./configs/prometheus/exporters/kafka/jmx_prometheus_javaagent-0.3.1.jar
+  kafka.jmx-exporter-zookeeper-config:
+    file: ./configs/prometheus/exporters/kafka/jmx-exporter-zookeeper-config.yml
+  kafka.jmx-exporter-kafka-config:
+    file: ./configs/prometheus/exporters/kafka/jmx-exporter-kafka-config.yml
+
 secrets:
   kafka.kafka-cloud.keystore.jks:
     file: ./security/kafka.kafka-cloud.keystore.jks
@@ -414,8 +434,8 @@ volumes:
 
 networks:
   cloudnet:
-    external:
-      name: cloudnet
+    external: true
+    name: cloudnet
   edgenet:
-    external:
-      name: edgenet_server1
+    external: true
+    name: edgenet_server1

@@ -1,7 +1,7 @@
 # zeelos - edge
 # MAINTAINER zeelos.io - https://zeelos.io
 
-version: '3.1'
+version: '3.6'
 
 services:
 
@@ -14,6 +14,7 @@ services:
       - ZOOKEEPER_SERVER_ID=1
       - ZOOKEEPER_CLIENT_PORT=2171
       - ZOOKEEPER_TICK_TIME=2000
+      - KAFKA_OPTS=-javaagent:/etc/kafka/prometheus/jmx_prometheus_javaagent.jar=8080:/etc/kafka/prometheus/jmx-exporter-zookeeper-config.yml
       - KAFKA_JMX_HOSTNAME=localhost
       - KAFKA_JMX_PORT=9575
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
@@ -24,6 +25,11 @@ services:
     ports:
       - 2171:2171
       - 9575:9575
+    configs:
+      - source: kafka.jmx-exporter-javaagent-jar
+        target: /etc/kafka/prometheus/jmx_prometheus_javaagent.jar
+      - source: kafka.jmx-exporter-zookeeper-config
+        target: /etc/kafka/prometheus/jmx-exporter-zookeeper-config.yml
     deploy:
       placement:
         constraints:
@@ -40,6 +46,7 @@ services:
       - KAFKA_BROKER_ID=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper-edge:2171
       - KAFKA_ADVERTISED_LISTENERS=SSL://kafka-edge:9082
+      - KAFKA_OPTS=-javaagent:/etc/kafka/prometheus/jmx_prometheus_javaagent.jar=8080:/etc/kafka/prometheus/jmx-exporter-kafka-config.yml
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
       - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
@@ -56,6 +63,11 @@ services:
       - KAFKA_SSL_TRUSTSTORE_CREDENTIALS=kafka-edge_truststore_creds
       - KAFKA_SSL_CLIENT_AUTH=required
       - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:HTTPS
+    configs:
+      - source: kafka.jmx-exporter-javaagent-jar
+        target: /etc/kafka/prometheus/jmx_prometheus_javaagent.jar
+      - source: kafka.jmx-exporter-kafka-config
+        target: /etc/kafka/prometheus/jmx-exporter-kafka-config.yml
     secrets:
       - source: kafka.kafka-edge.keystore.jks
         target: /etc/kafka/secrets/kafka.kafka-edge.keystore.jks
@@ -269,6 +281,14 @@ services:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Leshan - OMA Lightweight M2M server and client in Java"
 
+configs:
+  kafka.jmx-exporter-javaagent-jar:
+    file: ./configs/prometheus/exporters/kafka/jmx_prometheus_javaagent-0.3.1.jar
+  kafka.jmx-exporter-zookeeper-config:
+    file: ./configs/prometheus/exporters/kafka/jmx-exporter-zookeeper-config.yml
+  kafka.jmx-exporter-kafka-config:
+    file: ./configs/prometheus/exporters/kafka/jmx-exporter-kafka-config.yml
+
 secrets:
   kafka.kafka-edge.keystore.jks:
     file: ./security/kafka.kafka-edge.keystore.jks
@@ -309,8 +329,8 @@ volumes:
 
 networks:
   edgenet:
-    external:
-      name: edgenet_server1
+    external: true
+    name: edgenet_server1
   cloudnet:
-    external:
-      name: cloudnet
+    external: true
+    name: cloudnet
