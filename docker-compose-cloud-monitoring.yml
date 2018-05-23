@@ -37,7 +37,7 @@ services:
       io.zeelos.role: "Prometheus - From metrics to insight, Power your metrics and alerting with a leading open-source monitoring solution"
 
   cadvisor-cloud:
-    image: google/cadvisor:v0.29.0
+    image: zeelos/cadvisor:v0.29.1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock,readonly
       - /:/rootfs
@@ -73,7 +73,7 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)"'
       - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
-      - '--collector.textfile.directory=/etc/node-exporter/'
+      - '--collector.textfile.directory=/etc/node_exporter/'
     deploy:
       mode: global
       placement:
@@ -84,7 +84,7 @@ services:
       io.zeelos.role: "node-exporter - Exporter for machine metrics"
 
   docker-exporter-cloud:
-    image: basi/socat:v0.1.0
+    image: zeelos/docker_exporter:1.7.3.1
     environment:
       - IN=172.18.0.1:9323
       - OUT=9323
@@ -142,7 +142,7 @@ services:
       io.zeelos.role: "unsee - Alert dashboard for Prometheus Alertmanager"
 
   kafka-exporter-cloud:
-    image: danielqsj/kafka-exporter:v1.1.0
+    image: zeelos/kafka_exporter:v1.1.0
     secrets:
       - source: client-cloud.certificate.pem
         target: /etc/kafka/secrets/client-cloud.certificate.pem
