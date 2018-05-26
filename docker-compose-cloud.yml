@@ -6,7 +6,7 @@ version: '3.6'
 services:
 
   zookeeper-cloud:
-    image: confluentinc/cp-zookeeper:4.1.0
+    image: confluentinc/cp-zookeeper:4.1.1
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
       - zookeeper-log:/var/lib/zookeeper/log
@@ -39,7 +39,7 @@ services:
       io.zeelos.role: "ZooKeeper - An open-source server which enables highly reliable distributed coordination"
 
   kafka-cloud:
-    image: confluentinc/cp-kafka:4.1.0
+    image: confluentinc/cp-kafka:4.1.1
     volumes:
       - kafka-data:/var/lib/kafka/data
     environment:
@@ -92,7 +92,7 @@ services:
       io.zeelos.role: "Kafka - A distributed streaming platform"
 
   schema-registry-cloud:
-    image: confluentinc/cp-schema-registry:4.1.0
+    image: confluentinc/cp-schema-registry:4.1.1
     environment:
       - SCHEMA_REGISTRY_HOST_NAME=schema-registry-cloud
       - SCHEMA_REGISTRY_LISTENERS=https://0.0.0.0:8081
@@ -218,7 +218,7 @@ services:
       io.zeelos.role: "Connect - Your hub for connecting Apache Kafka to all your systems"
 
   kafka-rest-cloud:
-    image: confluentinc/cp-kafka-rest:4.1.0
+    image: confluentinc/cp-kafka-rest:4.1.1
     environment:
       - KAFKA_REST_HOST_NAME=kafka-rest-cloud
       - KAFKA_REST_LISTENERS=https://0.0.0.0:8082
@@ -264,7 +264,7 @@ services:
       io.zeelos.role: "Kafka REST Proxy - A RESTful interface to a Kafka cluster"
 
   kafka-mirrormaker:
-    image: zeelos/kafka-mirrormaker:4.1.0
+    image: zeelos/kafka-mirrormaker:4.1.1
     environment:
       - MIRRORMAKER_WHITE_LIST=^server1_((?!req).)*$$
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
@@ -317,7 +317,7 @@ services:
       io.zeelos.role: "Kafka MirrorMaker - A stand-alone tool for copying data between two Apache Kafka clusters"
 
   orientdb:
-    image: zeelos/orientdb:3.0.0-tp3-with-zeelosdb
+    image: zeelos/orientdb:3.0.1-tp3-with-zeelosdb
     volumes:
       - orientdb-data:/orientdb/databases
     environment:
@@ -361,7 +361,7 @@ services:
       io.zeelos.role: "InfluxDB - The Platform for Time-Series Data"
 
   grafana:
-    image: zeelos/grafana:5.1.0-influx-with-zeelosdb
+    image: zeelos/grafana:5.1.3-influx-with-zeelosdb
     volumes:
       - grafana-data:/var/lib/grafana
     environment:

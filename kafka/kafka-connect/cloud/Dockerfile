@@ -1,11 +1,11 @@
-FROM confluentinc/cp-kafka-connect:4.1.0
+FROM confluentinc/cp-kafka-connect:4.1.1
 MAINTAINER zeelos.io - https://zeelos.io
 
 ENV LESHAN_DRIVER_VERSION 0.1-SNAPSHOT
 ENV TRANSFORMS_VERSION 0.1-SNAPSHOT
 
-ENV STREAM_REACTOR_VERSION 1.0.0
-ENV INFLUXDB_DRIVER_VERSION 1.0.0
+ENV STREAM_REACTOR_VERSION 1.1.0
+ENV INFLUXDB_DRIVER_VERSION 1.1.0
 
 # add Leshan Asset, InfluxDB and tranforms connectors
 RUN mkdir -p /opt/connectors && \

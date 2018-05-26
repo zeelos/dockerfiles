@@ -6,7 +6,7 @@ version: '3.6'
 services:
 
   zookeeper-edge:
-    image: confluentinc/cp-zookeeper:4.1.0
+    image: confluentinc/cp-zookeeper:4.1.1
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
       - zookeeper-log:/var/lib/zookeeper/log
@@ -39,7 +39,7 @@ services:
       io.zeelos.role: "ZooKeeper - An open-source server which enables highly reliable distributed coordination"
 
   kafka-edge:
-    image: confluentinc/cp-kafka:4.1.0
+    image: confluentinc/cp-kafka:4.1.1
     volumes:
       - kafka-data:/var/lib/kafka/data
     environment:
@@ -94,7 +94,7 @@ services:
       io.zeelos.role: "Kafka - A distributed streaming platform"
 
   schema-registry-edge:
-    image: confluentinc/cp-schema-registry:4.1.0
+    image: confluentinc/cp-schema-registry:4.1.1
     environment:
       - SCHEMA_REGISTRY_HOST_NAME=schema-registry-edge
       - SCHEMA_REGISTRY_LISTENERS=https://0.0.0.0:8071
@@ -142,7 +142,7 @@ services:
       io.zeelos.role: "Schema Registry - Schema registry for Apache Kafka"
 
   kafka-rest-edge:
-    image: confluentinc/cp-kafka-rest:4.1.0
+    image: confluentinc/cp-kafka-rest:4.1.1
     environment:
       - KAFKA_REST_HOST_NAME=kafka-rest-edge
       - KAFKA_REST_LISTENERS=https://0.0.0.0:8072
@@ -190,7 +190,7 @@ services:
       io.zeelos.role: "Kafka REST Proxy - A RESTful interface to a Kafka cluster"
 
   kafka-mirrormaker:
-    image: zeelos/kafka-mirrormaker:4.1.0
+    image: zeelos/kafka-mirrormaker:4.1.1
     environment:
       - MIRRORMAKER_WHITE_LIST=^server1_management_req
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
