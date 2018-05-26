@@ -2,6 +2,7 @@
   "type": "record",
   "name": "AvroRequest",
   "namespace": "io.zeelos.leshan.avro.request",
+  "doc": "Represents the management request payload.",
   "fields": [
     {
       "name": "serverId",
@@ -34,9 +35,8 @@
             "name": "kind",
             "type": {
               "type": "enum",
-              "name": "AvroKind",
-              "namespace": "io.zeelos.leshan.avro.model",
-              "doc": "Represents the kind of the request.",
+              "name": "AvroRequestKind",
+              "doc": "Represents the request kind.",
               "symbols": [
                 "read",
                 "write",
@@ -62,7 +62,6 @@
             "type": {
               "type": "enum",
               "name": "AvroContentFormat",
-              "namespace": "io.zeelos.leshan.avro.model",
               "doc": "Represents the content format.",
               "symbols": [
                 "TLV",
@@ -87,7 +86,7 @@
                     "type": {
                       "type": "record",
                       "name": "AvroInstanceResource",
-                      "namespace": "io.zeelos.leshan.avro.model",
+                      "namespace": "io.zeelos.leshan.avro.resource",
                       "doc": "Represents the resource instance.",
                       "fields": [
                         {
@@ -265,7 +264,7 @@
                       {
                         "type": "record",
                         "name": "AvroObjectResource",
-                        "namespace": "io.zeelos.leshan.avro.model",
+                        "namespace": "io.zeelos.leshan.avro.resource",
                         "doc": "Represents an object.",
                         "fields": [
                           {
@@ -285,14 +284,14 @@
                           }
                         ]
                       },
-                      "io.zeelos.leshan.avro.model.AvroInstanceResource",
-                      "io.zeelos.leshan.avro.model.AvroResource"
+                      "io.zeelos.leshan.avro.resource.AvroInstanceResource",
+                      "io.zeelos.leshan.avro.resource.AvroResource"
                     ]
                   }
                 ]
               }
             ],
-            "doc": "Represents a request.",
+            "doc": "Represents the actual request body.",
             "default": null
           }
         ]
