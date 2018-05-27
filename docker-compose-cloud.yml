@@ -266,7 +266,7 @@ services:
   kafka-mirrormaker:
     image: zeelos/kafka-mirrormaker:4.1.1
     environment:
-      - MIRRORMAKER_WHITE_LIST=^server1_((?!req).)*$$
+      - MIRRORMAKER_WHITE_LIST=^iot.server1.((?!req).)*$$
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
       - MIRRORMAKER_OFFSET_COMMIT_INTERVAL_MS=60000
       - MIRRORMAKER_NUM_STREAMS=1

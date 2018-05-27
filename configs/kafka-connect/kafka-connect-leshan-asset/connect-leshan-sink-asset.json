@@ -2,7 +2,7 @@
   "config": {
     "connector.class": "io.zeelos.leshan.kafka.connect.sink.asset.LeshanSinkAssetConnector",
     "tasks.max": "2",
-    "topics": "server1_registration_new,server1_registration_up,server1_registration_del",
+    "topics": "iot.server1.registrations",
     "tinkerpop3.url": "remote:orientdb/zeelosdb",
     "tinkerpop3.user": "root",
     "tinkerpop3.password": "secret",
