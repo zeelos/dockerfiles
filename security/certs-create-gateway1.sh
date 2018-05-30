@@ -5,13 +5,7 @@ set -o nounset \
     -o verbose
 #    -o xtrace
 
-# Cleanup files
-rm -f *.crt *.csr *_creds *.jks *.srl *.key *.pem *.der *.p12
-
-# Generate CA key
-openssl req -new -x509 -keyout zeelos.io-ca.key -out zeelos.io-ca.crt -days 9999 -subj '/CN=zeelos.io/OU=dev/O=zeelos.io/L=Athens/C=GR' -passin pass:itsasecret -passout pass:itsasecret
-
-for i in kafka-cloud connect-cloud schema-registry-cloud rest-cloud client-cloud kafka-edge schema-registry-edge rest-edge client-edge
+for i in kafka-gateway1 schema-registry-gateway1 rest-gateway1 client-gateway1
 do
 	echo "------------------------------- $i -------------------------------"
 

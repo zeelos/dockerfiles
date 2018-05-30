@@ -21,7 +21,8 @@ services:
                        -Dcom.sun.management.jmxremote.ssl=false
     networks:
       - cloudnet
-      - edgenet
+      - gateway1
+      - monnet
     ports:
       - 2181:2181
       - 9585:9585
@@ -79,7 +80,8 @@ services:
         target: /etc/kafka/secrets/kafka-cloud_truststore_creds
     networks:
       - cloudnet
-      - edgenet
+      - gateway1
+      - monnet
     ports:
       - 9092:9092
       - 9581:9581
@@ -266,12 +268,12 @@ services:
   kafka-mirrormaker:
     image: zeelos/kafka-mirrormaker:4.1.1
     environment:
-      - MIRRORMAKER_WHITE_LIST=^iot.server1.((?!req).)*$$
+      - MIRRORMAKER_WHITE_LIST=^iot.gateway1.((?!req).)*$$
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
       - MIRRORMAKER_OFFSET_COMMIT_INTERVAL_MS=60000
       - MIRRORMAKER_NUM_STREAMS=1
-      - CONSUMER_BOOTSTRAP_SERVERS=kafka-edge:9082
-      - CONSUMER_GROUP_ID=mirrormaker_server1
+      - CONSUMER_BOOTSTRAP_SERVERS=kafka-gateway1:9082
+      - CONSUMER_GROUP_ID=mirrormaker_gateway1
       - CONSUMER_AUTO_OFFSET_RESET=earliest
       - PRODUCER_BOOTSTRAP_SERVERS=kafka-cloud:9092
       - KAFKA_JMX_HOSTNAME=localhost
@@ -285,9 +287,9 @@ services:
       - PRODUCER_SSL_KEYSTORE_PASSWORD=itsasecret
       - PRODUCER_SSL_KEY_PASSWORD=itsasecret
       - CONSUMER_SECURITY_PROTOCOL=SSL
-      - CONSUMER_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.client-edge.truststore.jks
+      - CONSUMER_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.client-gateway1.truststore.jks
       - CONSUMER_SSL_TRUSTSTORE_PASSWORD=itsasecret
-      - CONSUMER_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.client-edge.keystore.jks
+      - CONSUMER_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.client-gateway1.keystore.jks
       - CONSUMER_SSL_KEYSTORE_PASSWORD=itsasecret
       - CONSUMER_SSL_KEY_PASSWORD=itsasecret
     secrets:
@@ -295,17 +297,17 @@ services:
         target: /etc/kafka/secrets/kafka.client-cloud.keystore.jks
       - source: kafka.client-cloud.truststore.jks
         target: /etc/kafka/secrets/kafka.client-cloud.truststore.jks
-      - source: kafka.client-edge.keystore.jks
-        target: /etc/kafka/secrets/kafka.client-edge.keystore.jks
-      - source: kafka.client-edge.truststore.jks
-        target: /etc/kafka/secrets/kafka.client-edge.truststore.jks
+      - source: kafka.client-gateway1.keystore.jks
+        target: /etc/kafka/secrets/kafka.client-gateway1.keystore.jks
+      - source: kafka.client-gateway1.truststore.jks
+        target: /etc/kafka/secrets/kafka.client-gateway1.truststore.jks
       - source: client_security_cloud.properties
         target: /etc/kafka/secrets/client_security_cloud.properties
-      - source: client_security_edge.properties
-        target: /etc/kafka/secrets/client_security_edge.properties
+      - source: client_security_gateway1.properties
+        target: /etc/kafka/secrets/client_security_gateway1.properties
     networks:
       - cloudnet
-      - edgenet
+      - gateway1
     ports:
       - 9574:9574
     deploy:
@@ -315,6 +317,30 @@ services:
     labels:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Kafka MirrorMaker - A stand-alone tool for copying data between two Apache Kafka clusters"
+
+  kafka-exporter-cloud:
+    image: zeelos/kafka_exporter:v1.1.0
+    secrets:
+      - source: client-cloud.certificate.pem
+        target: /etc/kafka/secrets/client-cloud.certificate.pem
+      - source: client-cloud.key
+        target: /etc/kafka/secrets/client-cloud.key
+    networks:
+      - monnet
+    command:
+      - '--kafka.server=kafka-cloud:9092'
+      - '--web.listen-address=:8080'
+      - '--tls.enabled'
+      - '--tls.cert-file=/etc/kafka/secrets/client-cloud.certificate.pem'
+      - '--tls.key-file=/etc/kafka/secrets/client-cloud.key'
+      - '--tls.insecure-skip-tls-verify'
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Kafka Exporter - Kafka exporter for Prometheus (non-jmx)"
 
   orientdb:
     image: zeelos/orientdb:3.0.1-tp3-with-zeelosdb
@@ -369,6 +395,7 @@ services:
       - GF_INSTALL_PLUGINS=natel-discrete-panel
     networks:
       - cloudnet
+      - monnet
     ports:
       - 3000:3000
     user: "472"
@@ -415,14 +442,18 @@ secrets:
     file: ./security/kafka.client-cloud.keystore.jks
   kafka.client-cloud.truststore.jks:
     file: ./security/kafka.client-cloud.truststore.jks
-  kafka.client-edge.keystore.jks:
-    file: ./security/kafka.client-edge.keystore.jks
-  kafka.client-edge.truststore.jks:
-    file: ./security/kafka.client-edge.truststore.jks
+  kafka.client-gateway1.keystore.jks:
+    file: ./security/kafka.client-gateway1.keystore.jks
+  kafka.client-gateway1.truststore.jks:
+    file: ./security/kafka.client-gateway1.truststore.jks
   client_security_cloud.properties:
     file: ./security/client_security_cloud.properties
-  client_security_edge.properties:
-    file: ./security/client_security_edge.properties
+  client_security_gateway1.properties:
+    file: ./security/client_security_gateway1.properties
+  client-cloud.certificate.pem:
+    file: ./security/client-cloud.certificate.pem
+  client-cloud.key:
+    file: ./security/client-cloud.key
 
 volumes:
   zookeeper-data:
@@ -433,9 +464,12 @@ volumes:
   grafana-data:
 
 networks:
+  monnet:
+    external: true
+    name: monnet
   cloudnet:
     external: true
     name: cloudnet
-  edgenet:
+  gateway1:
     external: true
-    name: edgenet_server1
+    name: edgenet_gateway1

@@ -2,8 +2,8 @@
   "config": {
     "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
     "tasks.max": "2",
-    "topics": "iot.server1.observations,iot.server1.management.rep",
-    "connect.influx.kcql": "INSERT INTO resources SELECT dvalue as value,lvalue as value,svalue,bvalue FROM iot.server1.observations WITHTIMESTAMP timestamp WITHTAG (serverId, ep, kind, path);INSERT INTO resources SELECT dvalue as value,lvalue as value,svalue,bvalue,message as svalue FROM iot.server1.management.rep WITHTIMESTAMP timestamp WITHTAG (serverId, ep, kind, path);",
+    "topics": "iot.gateway1.observations,iot.gateway1.management.rep",
+    "connect.influx.kcql": "INSERT INTO resources SELECT dvalue as value,lvalue as value,svalue,bvalue FROM iot.gateway1.observations WITHTIMESTAMP timestamp WITHTAG (ticket, observationId, serverId, ep, kind, path);INSERT INTO resources SELECT dvalue as value,lvalue as value,svalue,bvalue,message as svalue FROM iot.gateway1.management.rep WITHTIMESTAMP timestamp WITHTAG (ticket, serverId, ep, kind, path);",
     "connect.influx.url": "http://influxdb:8086",
     "connect.influx.username":"root",
     "connect.influx.password":"secret",
@@ -17,7 +17,7 @@
     "transforms.flatten.blacklist": "AvroObjectResource,AvroInstanceResource,AvroMultipleResource",
     "transforms.flatten.delimiter": ".",
     "transforms.replacer.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
-    "transforms.replacer.whitelist": "serverId,ep,path,timestamp,rep.kind,rep.body.AvroReadResponseBody.content.AvroResource.value.double,rep.body.AvroReadResponseBody.content.AvroResource.value.long,rep.body.AvroReadResponseBody.content.AvroResource.value.string,rep.body.AvroReadResponseBody.content.AvroResource.value.boolean,rep.body.AvroGenericResponse.message",
+    "transforms.replacer.whitelist": "ticket,observationId,serverId,ep,path,timestamp,rep.kind,rep.body.AvroReadResponseBody.content.AvroResource.value.double,rep.body.AvroReadResponseBody.content.AvroResource.value.long,rep.body.AvroReadResponseBody.content.AvroResource.value.string,rep.body.AvroReadResponseBody.content.AvroResource.value.boolean,rep.body.AvroGenericResponse.message",
     "transforms.replacer.renames": "rep.kind:kind,rep.body.AvroReadResponseBody.content.AvroResource.value.double:dvalue,rep.body.AvroReadResponseBody.content.AvroResource.value.long:lvalue,rep.body.AvroReadResponseBody.content.AvroResource.value.string:svalue,rep.body.AvroReadResponseBody.content.AvroResource.value.boolean:bvalue,rep.body.AvroGenericResponse.message:message",
     "transforms.cast.type": "org.apache.kafka.connect.transforms.Cast$Value",
     "transforms.cast.spec": "lvalue:float64",
@@ -25,5 +25,5 @@
     "value.converter": "io.confluent.connect.avro.AvroConverter",
     "value.converter.schema.registry.url": "https://schema-registry-cloud:8081"
   },
-  "name": "server1_influxdb_sink"
+  "name": "gateway1_influxdb_sink"
 }
