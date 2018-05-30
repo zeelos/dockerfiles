@@ -123,7 +123,7 @@ services:
   docker-exporter:
     image: zeelos/docker_exporter:1.7.3.1
     environment:
-      - IN=172.18.0.1:9323
+      - IN=172.17.0.1:9323
       - OUT=9323
     networks:
       - monnet
