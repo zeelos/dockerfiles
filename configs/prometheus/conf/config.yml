@@ -49,10 +49,10 @@ scrape_configs:
       type: 'A'
       port: 8080
 
-  - job_name: 'kafka-gateway1'
+  - job_name: 'kafka-gateway'
     dns_sd_configs:
     - names:
-      - 'tasks.kafka-gateway1'
+      - 'tasks.kafka-gateway'
       type: 'A'
       port: 8080
 
@@ -63,24 +63,16 @@ scrape_configs:
       type: 'A'
       port: 8080
 
-  - job_name: 'zookeeper-gateway1'
+  - job_name: 'zookeeper-gateway'
     dns_sd_configs:
     - names:
-      - 'tasks.zookeeper-gateway1'
+      - 'tasks.zookeeper-gateway'
       type: 'A'
       port: 8080
 
-  - job_name: 'kafka-exporter-cloud'
+  - job_name: 'kafka-exporter'
     dns_sd_configs:
     - names:
-      - 'tasks.kafka-exporter-cloud'
+      - 'tasks.kafka-exporter'
       type: 'A'
       port: 8080
-
-  - job_name: 'kafka-exporter-gateway1'
-    dns_sd_configs:
-    - names:
-      - 'tasks.kafka-exporter-gateway1'
-      type: 'A'
-      port: 8080
-

@@ -1,11 +1,11 @@
-# zeelos - gateway1
+# zeelos - gateway
 # MAINTAINER zeelos.io - https://zeelos.io
 
 version: '3.6'
 
 services:
 
-  zookeeper-gateway1:
+  zookeeper-gateway:
     image: confluentinc/cp-zookeeper:4.1.1
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
@@ -20,8 +20,7 @@ services:
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                        -Dcom.sun.management.jmxremote.ssl=false
     networks:
-      - gateway1
-      - cloudnet
+      - gateway
       - monnet
     ports:
       - 2171:2171
@@ -34,19 +33,20 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.type == gateway1
+          - node.labels.type == ${GATEWAY_ID}
     labels:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "ZooKeeper - An open-source server which enables highly reliable distributed coordination"
+      io.zeelos.gatewayId: ${GATEWAY_ID}
 
-  kafka-gateway1:
+  kafka-gateway:
     image: confluentinc/cp-kafka:4.1.1
     volumes:
       - kafka-data:/var/lib/kafka/data
     environment:
       - KAFKA_BROKER_ID=1
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-gateway1:2171
-      - KAFKA_ADVERTISED_LISTENERS=SSL://kafka-gateway1:9082
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-gateway:2171
+      - KAFKA_ADVERTISED_LISTENERS=SSL://kafka-gateway:9082
       - KAFKA_OPTS=-javaagent:/etc/kafka/prometheus/jmx_prometheus_javaagent.jar=8080:/etc/kafka/prometheus/jmx-exporter-kafka-config.yml
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
@@ -57,11 +57,11 @@ services:
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                        -Dcom.sun.management.jmxremote.ssl=false
       - KAFKA_INTER_BROKER_LISTENER_NAME=SSL
-      - KAFKA_SSL_KEYSTORE_FILENAME=kafka.kafka-gateway1.keystore.jks
-      - KAFKA_SSL_KEYSTORE_CREDENTIALS=kafka-gateway1_keystore_creds
-      - KAFKA_SSL_KEY_CREDENTIALS=kafka-gateway1_sslkey_creds
-      - KAFKA_SSL_TRUSTSTORE_FILENAME=kafka.kafka-gateway1.truststore.jks
-      - KAFKA_SSL_TRUSTSTORE_CREDENTIALS=kafka-gateway1_truststore_creds
+      - KAFKA_SSL_KEYSTORE_FILENAME=kafka.kafka-gateway.keystore.jks
+      - KAFKA_SSL_KEYSTORE_CREDENTIALS=kafka-gateway_keystore_creds
+      - KAFKA_SSL_KEY_CREDENTIALS=kafka-gateway_sslkey_creds
+      - KAFKA_SSL_TRUSTSTORE_FILENAME=kafka.kafka-gateway.truststore.jks
+      - KAFKA_SSL_TRUSTSTORE_CREDENTIALS=kafka-gateway_truststore_creds
       - KAFKA_SSL_CLIENT_AUTH=required
       - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM:HTTPS
     configs:
@@ -70,19 +70,18 @@ services:
       - source: kafka.jmx-exporter-kafka-config
         target: /etc/kafka/prometheus/jmx-exporter-kafka-config.yml
     secrets:
-      - source: kafka.kafka-gateway1.keystore.jks
-        target: /etc/kafka/secrets/kafka.kafka-gateway1.keystore.jks
-      - source: kafka-gateway1_keystore_creds
-        target: /etc/kafka/secrets/kafka-gateway1_keystore_creds
-      - source: kafka-gateway1_sslkey_creds
-        target: /etc/kafka/secrets/kafka-gateway1_sslkey_creds
-      - source: kafka.kafka-gateway1.truststore.jks
-        target: /etc/kafka/secrets/kafka.kafka-gateway1.truststore.jks
-      - source: kafka-gateway1_truststore_creds
-        target: /etc/kafka/secrets/kafka-gateway1_truststore_creds
+      - source: kafka.kafka-gateway.keystore.jks
+        target: /etc/kafka/secrets/kafka.kafka-gateway.keystore.jks
+      - source: kafka-gateway_keystore_creds
+        target: /etc/kafka/secrets/kafka-gateway_keystore_creds
+      - source: kafka-gateway_sslkey_creds
+        target: /etc/kafka/secrets/kafka-gateway_sslkey_creds
+      - source: kafka.kafka-gateway.truststore.jks
+        target: /etc/kafka/secrets/kafka.kafka-gateway.truststore.jks
+      - source: kafka-gateway_truststore_creds
+        target: /etc/kafka/secrets/kafka-gateway_truststore_creds
     networks:
-      - gateway1
-      - cloudnet
+      - gateway
       - monnet
     ports:
       - 9082:9082
@@ -90,15 +89,16 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.type == gateway1
+          - node.labels.type == ${GATEWAY_ID}
     labels:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Kafka - A distributed streaming platform"
+      io.zeelos.gatewayId: ${GATEWAY_ID}
 
-  schema-registry-gateway1:
+  schema-registry-gateway:
     image: confluentinc/cp-schema-registry:4.1.1
     environment:
-      - SCHEMA_REGISTRY_HOST_NAME=schema-registry-gateway1
+      - SCHEMA_REGISTRY_HOST_NAME=schema-registry-gateway
       - SCHEMA_REGISTRY_LISTENERS=https://0.0.0.0:8071
       - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=SSL://kafka-cloud:9092
       - SCHEMA_REGISTRY_MASTER_ELIGIBILIY=false
@@ -110,27 +110,27 @@ services:
       - SCHEMA_REGISTRY_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                                  -Dcom.sun.management.jmxremote.ssl=false
       - SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL=SSL
-      - SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway1.truststore.jks
+      - SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway.truststore.jks
       - SCHEMA_REGISTRY_KAFKASTORE_SSL_TRUSTSTORE_PASSWORD=itsasecret
-      - SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway1.keystore.jks
+      - SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway.keystore.jks
       - SCHEMA_REGISTRY_KAFKASTORE_SSL_KEYSTORE_PASSWORD=itsasecret
       - SCHEMA_REGISTRY_KAFKASTORE_SSL_KEY_PASSWORD=itsasecret
       - SCHEMA_REGISTRY_KAFKASTORE_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=HTTPS
-      - SCHEMA_REGISTRY_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway1.truststore.jks
+      - SCHEMA_REGISTRY_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway.truststore.jks
       - SCHEMA_REGISTRY_SSL_TRUSTSTORE_PASSWORD=itsasecret
-      - SCHEMA_REGISTRY_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway1.keystore.jks
+      - SCHEMA_REGISTRY_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway.keystore.jks
       - SCHEMA_REGISTRY_SSL_KEYSTORE_PASSWORD=itsasecret
       - SCHEMA_REGISTRY_SSL_KEY_PASSWORD=itsasecret
       - SCHEMA_REGISTRY_SSL_CLIENT_AUTH=true
       - SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL=https
       - SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL=INFO
     secrets:
-      - source: kafka.schema-registry-gateway1.keystore.jks
-        target: /etc/kafka/secrets/kafka.schema-registry-gateway1.keystore.jks
-      - source: kafka.schema-registry-gateway1.truststore.jks
-        target: /etc/kafka/secrets/kafka.schema-registry-gateway1.truststore.jks
+      - source: kafka.schema-registry-gateway.keystore.jks
+        target: /etc/kafka/secrets/kafka.schema-registry-gateway.keystore.jks
+      - source: kafka.schema-registry-gateway.truststore.jks
+        target: /etc/kafka/secrets/kafka.schema-registry-gateway.truststore.jks
     networks:
-      - gateway1
+      - gateway
       - cloudnet
     ports:
       - 8071:8071
@@ -138,19 +138,20 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.type == gateway1
+          - node.labels.type == ${GATEWAY_ID}
     labels:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Schema Registry - Schema registry for Apache Kafka"
+      io.zeelos.gatewayId: ${GATEWAY_ID}
 
-  kafka-rest-gateway1:
+  kafka-rest-gateway:
     image: confluentinc/cp-kafka-rest:4.1.1
     environment:
-      - KAFKA_REST_HOST_NAME=kafka-rest-gateway1
+      - KAFKA_REST_HOST_NAME=kafka-rest-gateway
       - KAFKA_REST_LISTENERS=https://0.0.0.0:8072
-      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper-gateway1:2171
-      - KAFKA_REST_BOOTSTRAP_SERVERS=kafka-gateway1:9082
-      - KAFKA_REST_SCHEMA_REGISTRY_URL=https://schema-registry-gateway1:8071
+      - KAFKA_REST_ZOOKEEPER_CONNECT=zookeeper-gateway:2171
+      - KAFKA_REST_BOOTSTRAP_SERVERS=kafka-gateway:9082
+      - KAFKA_REST_SCHEMA_REGISTRY_URL=https://schema-registry-gateway:8071
       - KAFKA_REST_ACCESS_CONTROL_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
       - KAFKA_REST_ACCESS_CONTROL_ALLOW_ORIGIN=*
       - KAFKA_REST_CONSUMER_REQUEST_TIMEOUT_MS=30000
@@ -160,56 +161,56 @@ services:
                            -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                            -Dcom.sun.management.jmxremote.ssl=false
       - KAFKA_REST_CLIENT_SECURITY_PROTOCOL=SSL
-      - KAFKA_REST_CLIENT_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.rest-gateway1.truststore.jks
+      - KAFKA_REST_CLIENT_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.rest-gateway.truststore.jks
       - KAFKA_REST_CLIENT_SSL_TRUSTSTORE_PASSWORD=itsasecret
-      - KAFKA_REST_CLIENT_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.rest-gateway1.keystore.jks
+      - KAFKA_REST_CLIENT_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.rest-gateway.keystore.jks
       - KAFKA_REST_CLIENT_SSL_KEYSTORE_PASSWORD=itsasecret
       - KAFKA_REST_CLIENT_SSL_KEY_PASSWORD=itsasecret
       - KAFKA_REST_CLIENT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=HTTPS
-      - KAFKA_REST_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.rest-gateway1.truststore.jks
+      - KAFKA_REST_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.rest-gateway.truststore.jks
       - KAFKA_REST_SSL_TRUSTSTORE_PASSWORD=itsasecret
-      - KAFKA_REST_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.rest-gateway1.keystore.jks
+      - KAFKA_REST_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.rest-gateway.keystore.jks
       - KAFKA_REST_SSL_KEYSTORE_PASSWORD=itsasecret
       - KAFKA_REST_SSL_KEY_PASSWORD=itsasecret
       - KAFKA_REST_SSL_CLIENT_AUTH=true
     secrets:
-      - source: kafka.rest-gateway1.keystore.jks
-        target: /etc/kafka/secrets/kafka.rest-gateway1.keystore.jks
-      - source: kafka.rest-gateway1.truststore.jks
-        target: /etc/kafka/secrets/kafka.rest-gateway1.truststore.jks
+      - source: kafka.rest-gateway.keystore.jks
+        target: /etc/kafka/secrets/kafka.rest-gateway.keystore.jks
+      - source: kafka.rest-gateway.truststore.jks
+        target: /etc/kafka/secrets/kafka.rest-gateway.truststore.jks
     networks:
-      - gateway1
-      - cloudnet
+      - gateway
     ports:
       - 8072:8072
       - 9573:9573
     deploy:
       placement:
         constraints:
-          - node.labels.type == gateway1
+          - node.labels.type == ${GATEWAY_ID}
     labels:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Kafka REST Proxy - A RESTful interface to a Kafka cluster"
+      io.zeelos.gatewayId: ${GATEWAY_ID}
 
-  kafka-mirrormaker-gateway1:
+  kafka-mirrormaker-gateway:
     image: zeelos/kafka-mirrormaker:4.1.1
     environment:
-      - MIRRORMAKER_WHITE_LIST=^iot.gateway1.management.req
+      - MIRRORMAKER_WHITE_LIST=^iot.${GATEWAY_ID}.management.req
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
       - MIRRORMAKER_OFFSET_COMMIT_INTERVAL_MS=60000
       - MIRRORMAKER_NUM_STREAMS=1
       - CONSUMER_BOOTSTRAP_SERVERS=kafka-cloud:9092
-      - CONSUMER_GROUP_ID=mirrormaker_gateway1
+      - CONSUMER_GROUP_ID=mirrormaker_edge_${GATEWAY_ID}
       - CONSUMER_AUTO_OFFSET_RESET=earliest
-      - PRODUCER_BOOTSTRAP_SERVERS=kafka-gateway1:9082
+      - PRODUCER_BOOTSTRAP_SERVERS=kafka-gateway:9082
       - KAFKA_JMX_HOSTNAME=localhost
       - KAFKA_JMX_PORT=9564
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                        -Dcom.sun.management.jmxremote.ssl=false
       - PRODUCER_SECURITY_PROTOCOL=SSL
-      - PRODUCER_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.client-gateway1.truststore.jks
+      - PRODUCER_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.client-gateway.truststore.jks
       - PRODUCER_SSL_TRUSTSTORE_PASSWORD=itsasecret
-      - PRODUCER_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.client-gateway1.keystore.jks
+      - PRODUCER_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.client-gateway.keystore.jks
       - PRODUCER_SSL_KEYSTORE_PASSWORD=itsasecret
       - PRODUCER_SSL_KEY_PASSWORD=itsasecret
       - CONSUMER_SECURITY_PROTOCOL=SSL
@@ -219,85 +220,87 @@ services:
       - CONSUMER_SSL_KEYSTORE_PASSWORD=itsasecret
       - CONSUMER_SSL_KEY_PASSWORD=itsasecret
     secrets:
-      - source: kafka.client-gateway1.keystore.jks
-        target: /etc/kafka/secrets/kafka.client-gateway1.keystore.jks
-      - source: kafka.client-gateway1.truststore.jks
-        target: /etc/kafka/secrets/kafka.client-gateway1.truststore.jks
+      - source: kafka.client-gateway.keystore.jks
+        target: /etc/kafka/secrets/kafka.client-gateway.keystore.jks
+      - source: kafka.client-gateway.truststore.jks
+        target: /etc/kafka/secrets/kafka.client-gateway.truststore.jks
       - source: kafka.client-cloud.keystore.jks
         target: /etc/kafka/secrets/kafka.client-cloud.keystore.jks
       - source: kafka.client-cloud.truststore.jks
         target: /etc/kafka/secrets/kafka.client-cloud.truststore.jks
-      - source: client_security_gateway1.properties
-        target: /etc/kafka/secrets/client_security_gateway1.properties
+      - source: client_security_gateway.properties
+        target: /etc/kafka/secrets/client_security_gateway.properties
       - source: client_security_cloud.properties
         target: /etc/kafka/secrets/client_security_cloud.properties
     networks:
-      - gateway1
+      - gateway
       - cloudnet
     ports:
       - 9564:9564
     deploy:
       placement:
         constraints:
-          - node.labels.type == gateway1
+          - node.labels.type == ${GATEWAY_ID}
     labels:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Kafka MirrorMaker - A stand-alone tool for copying data between two Apache Kafka clusters"
+      io.zeelos.gatewayId: ${GATEWAY_ID}
 
-  kafka-exporter-gateway1:
+  kafka-exporter:
     image: zeelos/kafka_exporter:v1.1.0
     secrets:
-      - source: client-gateway1.certificate.pem
-        target: /etc/kafka/secrets/client-gateway1.certificate.pem
-      - source: client-gateway1.key
-        target: /etc/kafka/secrets/client-gateway1.key
+      - source: client-gateway.certificate.pem
+        target: /etc/kafka/secrets/client-gateway.certificate.pem
+      - source: client-gateway.key
+        target: /etc/kafka/secrets/client-gateway.key
     networks:
       - monnet
     command:
-      - '--kafka.server=kafka-gateway1:9082'
+      - '--kafka.server=kafka-gateway:9082'
       - '--web.listen-address=:8080'
       - '--tls.enabled'
-      - '--tls.cert-file=/etc/kafka/secrets/client-gateway1.certificate.pem'
-      - '--tls.key-file=/etc/kafka/secrets/client-gateway1.key'
+      - '--tls.cert-file=/etc/kafka/secrets/client-gateway.certificate.pem'
+      - '--tls.key-file=/etc/kafka/secrets/client-gateway.key'
       - '--tls.insecure-skip-tls-verify'
     deploy:
       placement:
         constraints:
-          - node.labels.type == gateway1
+          - node.labels.type == ${GATEWAY_ID}
     labels:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Kafka Exporter - Kafka exporter for Prometheus (non-jmx)"
+      io.zeelos.gatewayId: ${GATEWAY_ID}
 
-  leshan-server-kafka-gateway1:
+  leshan-server-kafka-gateway:
     image: zeelos/leshan-server-kafka:0.1-SNAPSHOT
     volumes:
       - leshan-server-data:/opt/leshan-server-kafka
     environment:
-      - SERVERID=gateway1
-      - KAFKA_TOPIC_REGISTRATIONS=iot.gateway1.registrations
-      - KAFKA_TOPIC_OBSERVATIONS=iot.gateway1.observations
-      - KAFKA_TOPIC_MANAGEMENT_REQ=iot.gateway1.management.req
-      - KAFKA_TOPIC_MANAGEMENT_REP=iot.gateway1.management.rep
-      - KAFKA_BOOTSTRAP_SERVER=kafka-gateway1:9082
-      - KAFKA_SCHEMA_REGISTRY_URL=https://schema-registry-gateway1:8071
+      - SERVERID=${GATEWAY_ID}
+      - KAFKA_TOPIC_REGISTRATIONS=iot.${GATEWAY_ID}.registrations
+      - KAFKA_TOPIC_OBSERVATIONS=iot.${GATEWAY_ID}.observations
+      - KAFKA_TOPIC_MANAGEMENT_REQ=iot.${GATEWAY_ID}.management.req
+      - KAFKA_TOPIC_MANAGEMENT_REP=iot.${GATEWAY_ID}.management.rep
+      - KAFKA_BOOTSTRAP_SERVER=kafka-gateway:9082
+      - KAFKA_SCHEMA_REGISTRY_URL=https://schema-registry-gateway:8071
       - JAVA_OPTS=-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false
                   -Dcom.sun.management.jmxremote.rmi.port=9590 -Dcom.sun.management.jmxremote.port=9590
                   -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                   -Dcom.sun.management.jmxremote.ssl=false -Xmx512M -Xms512M
-                  -Djavax.net.ssl.trustStore=/etc/kafka/secrets/kafka.client-gateway1.truststore.jks
+                  -Djavax.net.ssl.trustStore=/etc/kafka/secrets/kafka.client-gateway.truststore.jks
                   -Djavax.net.ssl.trustStorePassword=itsasecret
-                  -Djavax.net.ssl.keyStore=/etc/kafka/secrets/kafka.client-gateway1.keystore.jks
+                  -Djavax.net.ssl.keyStore=/etc/kafka/secrets/kafka.client-gateway.keystore.jks
                   -Djavax.net.ssl.keyStorePassword=itsasecret
-      - KAFKA_SSL_PROPERTIES_LOCATION=/etc/kafka/secrets/client_security_gateway1.properties
+      - KAFKA_SSL_PROPERTIES_LOCATION=/etc/kafka/secrets/client_security_gateway.properties
     secrets:
-      - source: kafka.client-gateway1.keystore.jks
-        target: /etc/kafka/secrets/kafka.client-gateway1.keystore.jks
-      - source: kafka.client-gateway1.truststore.jks
-        target: /etc/kafka/secrets/kafka.client-gateway1.truststore.jks
-      - source: client_security_gateway1.properties
-        target: /etc/kafka/secrets/client_security_gateway1.properties
+      - source: kafka.client-gateway.keystore.jks
+        target: /etc/kafka/secrets/kafka.client-gateway.keystore.jks
+      - source: kafka.client-gateway.truststore.jks
+        target: /etc/kafka/secrets/kafka.client-gateway.truststore.jks
+      - source: client_security_gateway.properties
+        target: /etc/kafka/secrets/client_security_gateway.properties
     networks:
-      - gateway1
+      - gateway
     ports:
       - 5683:5683/udp
       - 5684:5684/udp
@@ -306,10 +309,11 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.type == gateway1
+          - node.labels.type == ${GATEWAY_ID}
     labels:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Leshan - OMA Lightweight M2M server and client in Java"
+      io.zeelos.gatewayId: ${GATEWAY_ID}
 
 configs:
   kafka.jmx-exporter-javaagent-jar:
@@ -320,40 +324,40 @@ configs:
     file: ./configs/prometheus/exporters/kafka/jmx-exporter-kafka-config.yml
 
 secrets:
-  kafka.kafka-gateway1.keystore.jks:
-    file: ./security/kafka.kafka-gateway1.keystore.jks
-  kafka-gateway1_keystore_creds:
-    file: ./security/kafka-gateway1_keystore_creds
-  kafka-gateway1_sslkey_creds:
-    file: ./security/kafka-gateway1_sslkey_creds
-  kafka.kafka-gateway1.truststore.jks:
-    file: ./security/kafka.kafka-gateway1.truststore.jks
-  kafka-gateway1_truststore_creds:
-    file: ./security/kafka-gateway1_truststore_creds
-  kafka.schema-registry-gateway1.keystore.jks:
-    file: ./security/kafka.schema-registry-gateway1.keystore.jks
-  kafka.schema-registry-gateway1.truststore.jks:
-    file: ./security/kafka.schema-registry-gateway1.truststore.jks
-  kafka.rest-gateway1.keystore.jks:
-    file: ./security/kafka.rest-gateway1.keystore.jks
-  kafka.rest-gateway1.truststore.jks:
-    file: ./security/kafka.rest-gateway1.truststore.jks
-  kafka.client-gateway1.keystore.jks:
-    file: ./security/kafka.client-gateway1.keystore.jks
-  kafka.client-gateway1.truststore.jks:
-    file: ./security/kafka.client-gateway1.truststore.jks
+  kafka.kafka-gateway.keystore.jks:
+    file: ./security/kafka.kafka-gateway.keystore.jks
+  kafka-gateway_keystore_creds:
+    file: ./security/kafka-gateway_keystore_creds
+  kafka-gateway_sslkey_creds:
+    file: ./security/kafka-gateway_sslkey_creds
+  kafka.kafka-gateway.truststore.jks:
+    file: ./security/kafka.kafka-gateway.truststore.jks
+  kafka-gateway_truststore_creds:
+    file: ./security/kafka-gateway_truststore_creds
+  kafka.schema-registry-gateway.keystore.jks:
+    file: ./security/kafka.schema-registry-gateway.keystore.jks
+  kafka.schema-registry-gateway.truststore.jks:
+    file: ./security/kafka.schema-registry-gateway.truststore.jks
+  kafka.rest-gateway.keystore.jks:
+    file: ./security/kafka.rest-gateway.keystore.jks
+  kafka.rest-gateway.truststore.jks:
+    file: ./security/kafka.rest-gateway.truststore.jks
+  kafka.client-gateway.keystore.jks:
+    file: ./security/kafka.client-gateway.keystore.jks
+  kafka.client-gateway.truststore.jks:
+    file: ./security/kafka.client-gateway.truststore.jks
   kafka.client-cloud.keystore.jks:
     file: ./security/kafka.client-cloud.keystore.jks
   kafka.client-cloud.truststore.jks:
     file: ./security/kafka.client-cloud.truststore.jks
-  client_security_gateway1.properties:
-    file: ./security/client_security_gateway1.properties
+  client_security_gateway.properties:
+    file: ./security/client_security_gateway.properties
   client_security_cloud.properties:
     file: ./security/client_security_cloud.properties
-  client-gateway1.certificate.pem:
-    file: ./security/client-gateway1.certificate.pem
-  client-gateway1.key:
-    file: ./security/client-gateway1.key
+  client-gateway.certificate.pem:
+    file: ./security/client-gateway.certificate.pem
+  client-gateway.key:
+    file: ./security/client-gateway.key
 
 volumes:
   zookeeper-data:
@@ -365,9 +369,9 @@ networks:
   monnet:
     external: true
     name: monnet
-  gateway1:
+  gateway:
     external: true
-    name: edgenet_gateway1
+    name: edgenet_${GATEWAY_ID}
   cloudnet:
     external: true
     name: cloudnet
