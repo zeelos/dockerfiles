@@ -48,8 +48,8 @@ services:
     networks:
       - cloudnet
       - gateway
-    ports:
-      - 9574:9574
+    # ports:
+    #   - 9574:9574
     deploy:
       placement:
         constraints:

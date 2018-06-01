@@ -75,6 +75,9 @@ services:
         target: /etc/kafka/secrets/client-cloud.key
     networks:
       - cloudnet
+    # ports:
+    #   - 8083:8083
+    #   - 9584:9584
     deploy:
       replicas: 1
       placement:
@@ -155,6 +158,9 @@ services:
         target: /etc/kafka/secrets/client-cloud.key
     networks:
       - cloudnet
+    # ports:
+    #   - 8083:8083
+    #   - 9585:9585
     deploy:
       replicas: 1
       placement:
