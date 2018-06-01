@@ -22,9 +22,9 @@ services:
     networks:
       - gateway
       - monnet
-    ports:
-      - 2171:2171
-      - 9575:9575
+    # ports:
+    #   - 2171:2171
+    #   - 9575:9575
     configs:
       - source: kafka.jmx-exporter-javaagent-jar
         target: /etc/kafka/prometheus/jmx_prometheus_javaagent.jar
@@ -83,9 +83,9 @@ services:
     networks:
       - gateway
       - monnet
-    ports:
-      - 9082:9082
-      - 9571:9571
+    # ports:
+    #   - 9082:9082
+    #   - 9571:9571
     deploy:
       placement:
         constraints:
@@ -132,9 +132,9 @@ services:
     networks:
       - gateway
       - cloudnet
-    ports:
-      - 8071:8071
-      - 9572:9572
+    # ports:
+    #   - 8071:8071
+    #   - 9572:9572
     deploy:
       placement:
         constraints:
@@ -180,9 +180,9 @@ services:
         target: /etc/kafka/secrets/kafka.rest-gateway.truststore.jks
     networks:
       - gateway
-    ports:
-      - 8072:8072
-      - 9573:9573
+    # ports:
+    #   - 8072:8072
+    #   - 9573:9573
     deploy:
       placement:
         constraints:
@@ -235,8 +235,8 @@ services:
     networks:
       - gateway
       - cloudnet
-    ports:
-      - 9564:9564
+    # ports:
+    #   - 9564:9564
     deploy:
       placement:
         constraints:
@@ -301,11 +301,11 @@ services:
         target: /etc/kafka/secrets/client_security_gateway.properties
     networks:
       - gateway
-    ports:
-      - 5683:5683/udp
-      - 5684:5684/udp
-      - 8080:8080
-      - 9590:9590
+    # ports:
+    #   - 5683:5683/udp
+    #   - 5684:5684/udp
+    #   - 8080:8080
+    #   - 9590:9590
     deploy:
       placement:
         constraints:
