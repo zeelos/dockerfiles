@@ -98,7 +98,7 @@ services:
   schema-registry-gateway:
     image: confluentinc/cp-schema-registry:4.1.1
     environment:
-      - SCHEMA_REGISTRY_HOST_NAME=schema-registry-gateway
+      - SCHEMA_REGISTRY_HOST_NAME=schema-registry-${GATEWAY_ID}
       - SCHEMA_REGISTRY_LISTENERS=https://0.0.0.0:8071
       - SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS=SSL://kafka-cloud:9092
       - SCHEMA_REGISTRY_MASTER_ELIGIBILIY=false
