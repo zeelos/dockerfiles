@@ -16,6 +16,7 @@ services:
       - CONSUMER_GROUP_ID=mirrormaker_cloud_${GATEWAY_ID}
       - CONSUMER_AUTO_OFFSET_RESET=earliest
       - PRODUCER_BOOTSTRAP_SERVERS=kafka-cloud:9092
+      - KAFKA_HEAP_OPTS=-Xms128M -Xmx128M
       - KAFKA_JMX_HOSTNAME=localhost
       - KAFKA_JMX_PORT=9574
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false

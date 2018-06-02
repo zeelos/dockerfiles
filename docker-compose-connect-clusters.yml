@@ -34,6 +34,7 @@ services:
       - CONNECT_LOG4J_ROOT_LOGLEVEL=INFO
       - CONNECT_LOG4J_LOGGERS=com.datamountaineer=DEBUG
       - CONNECT_PLUGIN_PATH=/opt/connectors
+      - KAFKA_HEAP_OPTS=-Xms128M -Xmx128M
       - KAFKA_JMX_HOSTNAME=localhost
       - KAFKA_JMX_PORT=9584
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
@@ -117,6 +118,7 @@ services:
       - CONNECT_LOG4J_ROOT_LOGLEVEL=INFO
       - CONNECT_LOG4J_LOGGERS=io.zeelos.leshan=DEBUG
       - CONNECT_PLUGIN_PATH=/opt/connectors
+      - KAFKA_HEAP_OPTS=-Xms128M -Xmx128M
       - KAFKA_JMX_HOSTNAME=localhost
       - KAFKA_JMX_PORT=9585
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
