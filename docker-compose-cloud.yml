@@ -192,6 +192,7 @@ services:
       - source: client-cloud.key
         target: /etc/kafka/secrets/client-cloud.key
     networks:
+      - cloudnet
       - monnet
     command:
       - '--kafka.server=kafka-cloud:9092'

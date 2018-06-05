@@ -47,8 +47,8 @@ services:
       - source: client_security_gateway.properties
         target: /etc/kafka/secrets/client_security_gateway.properties
     networks:
-      - cloudnet
       - gateway
+      - cloudnet
     # ports:
     #   - 9574:9574
     deploy:

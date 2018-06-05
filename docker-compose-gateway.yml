@@ -272,6 +272,7 @@ services:
       - source: client-gateway.key
         target: /etc/kafka/secrets/client-gateway.key
     networks:
+      - gateway
       - monnet
     command:
       - '--kafka.server=kafka-gateway:9082'
