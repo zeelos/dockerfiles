@@ -184,7 +184,7 @@ services:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Kafka REST Proxy - A RESTful interface to a Kafka cluster"
 
-  kafka-exporter:
+  kafka-exporter-cloud:
     image: zeelos/kafka_exporter:v1.1.0
     secrets:
       - source: client-cloud.certificate.pem

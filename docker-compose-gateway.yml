@@ -22,9 +22,13 @@ services:
     networks:
       - gateway
       - monnet
-    # ports:
-    #   - 2171:2171
-    #   - 9575:9575
+    ports:
+      - published: 2171
+        target: 2171
+        mode: host
+      - published: 9575
+        target: 9575
+        mode: host
     configs:
       - source: kafka.jmx-exporter-javaagent-jar
         target: /etc/kafka/prometheus/jmx_prometheus_javaagent.jar
@@ -83,9 +87,13 @@ services:
     networks:
       - gateway
       - monnet
-    # ports:
-    #   - 9082:9082
-    #   - 9571:9571
+    ports:
+      - published: 9082
+        target: 9082
+        mode: host
+      - published: 9571
+        target: 9571
+        mode: host
     deploy:
       placement:
         constraints:
@@ -132,9 +140,13 @@ services:
     networks:
       - gateway
       - cloudnet
-    # ports:
-    #   - 8071:8071
-    #   - 9572:9572
+    ports:
+      - published: 8071
+        target: 8071
+        mode: host
+      - published: 9572
+        target: 9572
+        mode: host
     deploy:
       placement:
         constraints:
@@ -180,9 +192,13 @@ services:
         target: /etc/kafka/secrets/kafka.rest-gateway.truststore.jks
     networks:
       - gateway
-    # ports:
-    #   - 8072:8072
-    #   - 9573:9573
+    ports:
+      - published: 8072
+        target: 8072
+        mode: host
+      - published: 9573
+        target: 9573
+        mode: host
     deploy:
       placement:
         constraints:
@@ -235,8 +251,10 @@ services:
     networks:
       - gateway
       - cloudnet
-    # ports:
-    #   - 9564:9564
+    ports:
+      - published: 9564
+        target: 9564
+        mode: host
     deploy:
       placement:
         constraints:
@@ -246,7 +264,7 @@ services:
       io.zeelos.role: "Kafka MirrorMaker - A stand-alone tool for copying data between two Apache Kafka clusters"
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
-  kafka-exporter:
+  kafka-exporter-gateway:
     image: zeelos/kafka_exporter:v1.1.0
     secrets:
       - source: client-gateway.certificate.pem
@@ -301,11 +319,18 @@ services:
         target: /etc/kafka/secrets/client_security_gateway.properties
     networks:
       - gateway
-    # ports:
-    #   - 5683:5683/udp
-    #   - 5684:5684/udp
-    #   - 8080:8080
-    #   - 9590:9590
+    ports:
+      - published: 8080
+        target: 8080
+        mode: host
+      - published: 5683
+        target: 5683
+        protocol: udp
+        mode: host
+      - published: 5684
+        target: 5684
+        protocol: udp
+        mode: host
     deploy:
       placement:
         constraints:

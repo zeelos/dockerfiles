@@ -1,7 +1,7 @@
 {
   "config": {
     "connector.class": "com.datamountaineer.streamreactor.connect.influx.InfluxSinkConnector",
-    "tasks.max": "2",
+    "tasks.max": "1",
     "topics": "iot.GATEWAY_ID.observations,iot.GATEWAY_ID.management.rep",
     "connect.influx.kcql": "INSERT INTO resources SELECT dvalue as value,lvalue as value,svalue,bvalue FROM iot.GATEWAY_ID.observations WITHTIMESTAMP timestamp WITHTAG (ticket, observationId, serverId, ep, kind, path);INSERT INTO resources SELECT dvalue as value,lvalue as value,svalue,bvalue,message as svalue FROM iot.GATEWAY_ID.management.rep WITHTIMESTAMP timestamp WITHTAG (ticket, serverId, ep, kind, path);",
     "connect.influx.url": "http://influxdb:8086",

@@ -1,7 +1,7 @@
 {
   "config": {
     "connector.class": "io.confluent.connect.replicator.ReplicatorSourceConnector",
-    "tasks.max": "2",
+    "tasks.max": "1",
     "src.zookeeper.connect": "zookeeper-gateway:2171",
     "src.kafka.bootstrap.servers": "kafka-gateway:9082",
     "dest.zookeeper.connect": "zookeeper-cloud:2181",
