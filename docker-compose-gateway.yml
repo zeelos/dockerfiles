@@ -318,6 +318,10 @@ services:
         target: /etc/kafka/secrets/kafka.client-gateway.truststore.jks
       - source: client_security_gateway.properties
         target: /etc/kafka/secrets/client_security_gateway.properties
+      - source: client-gateway.certificate.pem
+        target: /etc/kafka/secrets/client-gateway.certificate.pem
+      - source: client-gateway.key
+        target: /etc/kafka/secrets/client-gateway.key
     networks:
       - gateway
     ports:
