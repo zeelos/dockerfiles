@@ -311,7 +311,7 @@ services:
                   -Dcom.sun.management.jmxremote.ssl=false -Xmx256M -Xms256M
                   -XX:+UseG1GC -XX:MaxGCPauseMillis=20
                   -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent
-                  -Xloggc:/var/log/leshan/leshanServer-gc.log -verbose:gc
+                  -Xloggc:/opt/leshan-server-kafka/leshanServer-gc.log -verbose:gc
                   -XX:+PrintGCDetails -XX:+PrintGCDateStamps
                   -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation
                   -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M
