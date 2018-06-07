@@ -336,6 +336,9 @@ services:
         target: 5684
         protocol: udp
         mode: host
+      - published: 9590
+        target: 9590
+        mode: host
     deploy:
       placement:
         constraints:
