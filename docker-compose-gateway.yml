@@ -19,6 +19,7 @@ services:
       - KAFKA_JMX_PORT=9575
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                        -Dcom.sun.management.jmxremote.ssl=false
+      - KAFKA_HEAP_OPTS=-Xmx256M -Xms256M
     networks:
       - gateway
       - monnet
@@ -113,6 +114,7 @@ services:
       - SCHEMA_REGISTRY_SCHEMA_REGISTRY_GROUP_ID=zeelos
       - SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
       - SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN=*
+      - SCHEMA_REGISTRY_HEAP_OPTS=-Xmx256M -Xms256M
       - SCHEMA_REGISTRY_JMX_HOSTNAME=localhost
       - SCHEMA_REGISTRY_JMX_PORT=9572
       - SCHEMA_REGISTRY_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
@@ -129,7 +131,7 @@ services:
       - SCHEMA_REGISTRY_SSL_KEYSTORE_LOCATION=/etc/kafka/secrets/kafka.schema-registry-gateway.keystore.jks
       - SCHEMA_REGISTRY_SSL_KEYSTORE_PASSWORD=itsasecret
       - SCHEMA_REGISTRY_SSL_KEY_PASSWORD=itsasecret
-      - SCHEMA_REGISTRY_SSL_CLIENT_AUTH=true
+      - SCHEMA_REGISTRY_SSL_CLIENT_AUTH=tru256e
       - SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL=https
       - SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL=INFO
     secrets:
@@ -167,7 +169,7 @@ services:
       - KAFKA_REST_ACCESS_CONTROL_ALLOW_METHODS=GET,POST,PUT,DELETE,OPTIONS
       - KAFKA_REST_ACCESS_CONTROL_ALLOW_ORIGIN=*
       - KAFKA_REST_CONSUMER_REQUEST_TIMEOUT_MS=30000
-      - KAFKAREST_HEAP_OPTS=-Xmx64M -Xms64M
+      - KAFKAREST_HEAP_OPTS=-Xmx256M -Xms256M
       - KAFKAREST_JMX_OPTS=-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false
                            -Dcom.sun.management.jmxremote.rmi.port=9573 -Dcom.sun.management.jmxremote.port=9573
                            -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
@@ -219,6 +221,7 @@ services:
       - CONSUMER_GROUP_ID=mirrormaker_edge_${GATEWAY_ID}
       - CONSUMER_AUTO_OFFSET_RESET=earliest
       - PRODUCER_BOOTSTRAP_SERVERS=kafka-gateway:9082
+      - KAFKA_HEAP_OPTS=-Xmx256M -Xms256M
       - KAFKA_JMX_HOSTNAME=localhost
       - KAFKA_JMX_PORT=9564
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
@@ -305,7 +308,14 @@ services:
       - JAVA_OPTS=-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false
                   -Dcom.sun.management.jmxremote.rmi.port=9590 -Dcom.sun.management.jmxremote.port=9590
                   -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
-                  -Dcom.sun.management.jmxremote.ssl=false -Xmx512M -Xms512M
+                  -Dcom.sun.management.jmxremote.ssl=false -Xmx256M -Xms256M
+                  -XX:+UseG1GC -XX:MaxGCPauseMillis=20
+                  -XX:InitiatingHeapOccupancyPercent=35 -XX:+ExplicitGCInvokesConcurrent
+                  -Xloggc:/var/log/leshan/leshanServer-gc.log -verbose:gc
+                  -XX:+PrintGCDetails -XX:+PrintGCDateStamps
+                  -XX:+PrintGCTimeStamps -XX:+UseGCLogFileRotation
+                  -XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M
+                  -Djava.awt.headless=true
                   -Djavax.net.ssl.trustStore=/etc/kafka/secrets/kafka.client-gateway.truststore.jks
                   -Djavax.net.ssl.trustStorePassword=itsasecret
                   -Djavax.net.ssl.keyStore=/etc/kafka/secrets/kafka.client-gateway.keystore.jks
