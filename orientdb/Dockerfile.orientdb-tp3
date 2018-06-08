@@ -7,7 +7,7 @@ MAINTAINER zeelos.io - https://zeelos.io
 #       [1] https://github.com/orientechnologies/orientdb-docker
 #       [2] https://github.com/orientechnologies/orientdb-docker/commit/9e4b51bd24b7200e2bcd1dd1438087a2e3968a93
 
-ENV ORIENTDB_VERSION 3.0.1
+ENV ORIENTDB_VERSION 3.0.2
 
 ENV ORIENTDB_DOWNLOAD_URL http://central.maven.org/maven2/com/orientechnologies/orientdb-tp3/$ORIENTDB_VERSION/orientdb-tp3-$ORIENTDB_VERSION.tar.gz
 
