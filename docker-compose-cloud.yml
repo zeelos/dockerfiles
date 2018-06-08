@@ -215,12 +215,10 @@ services:
       - orientdb-data:/orientdb/databases
     environment:
       - ORIENTDB_ROOT_PASSWORD=secret
-      - ORIENTDB_OPTS_MEMORY=-Xms512m -Xmx512m
       - JAVA_OPTS=-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false
                   -Dcom.sun.management.jmxremote.rmi.port=9450 -Dcom.sun.management.jmxremote.port=9450
                   -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                   -Dcom.sun.management.jmxremote.ssl=false
-      - ORIENTDB_SETTINGS=-Dstorage.diskCache.bufferSize=2048 -Dmemory.chunk.size=2048 -DridBag.embeddedToSbtreeBonsaiThreshold=-1
     networks:
       - cloudnet
     ports:
