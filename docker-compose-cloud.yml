@@ -219,6 +219,7 @@ services:
                   -Dcom.sun.management.jmxremote.rmi.port=9450 -Dcom.sun.management.jmxremote.port=9450
                   -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                   -Dcom.sun.management.jmxremote.ssl=false
+      - ORIENTDB_SETTINGS=-Denvironment.dumpCfgAtStartup=true -Dnetwork.token.expireTimeout=10080 -Dnetwork.socketTimeout=15000
     networks:
       - cloudnet
     ports:
