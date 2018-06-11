@@ -184,6 +184,31 @@ services:
       io.zeelos.app: "zeelos"
       io.zeelos.role: "Kafka REST Proxy - A RESTful interface to a Kafka cluster"
 
+  kafka-command-client:
+    image: confluentinc/cp-kafka-connect-base:4.1.1
+    environment:
+      - SCHEMA_REGISTRY_OPTS=-Djavax.net.ssl.trustStore=/etc/kafka/secrets/kafka.client-cloud.truststore.jks
+                             -Djavax.net.ssl.trustStorePassword=itsasecret
+                             -Djavax.net.ssl.keyStore=/etc/kafka/secrets/kafka.client-cloud.keystore.jks
+                             -Djavax.net.ssl.keyStorePassword=itsasecret
+    command: "bash -c -a 'tail -f /dev/null'"
+    secrets:
+      - source: kafka.client-cloud.keystore.jks
+        target: /etc/kafka/secrets/kafka.client-cloud.keystore.jks
+      - source: kafka.client-cloud.truststore.jks
+        target: /etc/kafka/secrets/kafka.client-cloud.truststore.jks
+      - source: client_security_cloud.properties
+        target: /etc/kafka/secrets/client_security_cloud.properties
+    networks:
+      - cloudnet
+    deploy:
+      placement:
+        constraints:
+          - node.labels.type == cloud
+    labels:
+      io.zeelos.app: "zeelos"
+      io.zeelos.role: "Kafka Command Client - An entry-point to issue commands against the Kafka Cloud Cluster"
+
   kafka-exporter-cloud:
     image: zeelos/kafka_exporter:v1.1.0
     secrets:
@@ -301,6 +326,12 @@ secrets:
     file: ./security/kafka.rest-cloud.keystore.jks
   kafka.rest-cloud.truststore.jks:
     file: ./security/kafka.rest-cloud.truststore.jks
+  kafka.client-cloud.keystore.jks:
+    file: ./security/kafka.client-cloud.keystore.jks
+  kafka.client-cloud.truststore.jks:
+    file: ./security/kafka.client-cloud.truststore.jks
+  client_security_cloud.properties:
+    file: ./security/client_security_cloud.properties
   client-cloud.certificate.pem:
     file: ./security/client-cloud.certificate.pem
   client-cloud.key:
