@@ -266,7 +266,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-command-client:
-    image: confluentinc/cp-kafka-connect-base:4.1.1
+    image: zeelos/cp-kafka-connect-base:4.1.1-arm32v7
     environment:
       - GATEWAY_ID=${GATEWAY_ID}
       - SCHEMA_REGISTRY_OPTS=-Djavax.net.ssl.trustStore=/etc/kafka/secrets/kafka.client-gateway.truststore.jks
