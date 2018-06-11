@@ -226,6 +226,7 @@ services:
       - KAFKA_JMX_PORT=9564
       - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false
                        -Dcom.sun.management.jmxremote.ssl=false
+      - PRODUCER_COMPRESSION_TYPE=snappy
       - PRODUCER_SECURITY_PROTOCOL=SSL
       - PRODUCER_SSL_TRUSTSTORE_LOCATION=/etc/kafka/secrets/kafka.client-gateway.truststore.jks
       - PRODUCER_SSL_TRUSTSTORE_PASSWORD=itsasecret
