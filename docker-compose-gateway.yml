@@ -331,6 +331,7 @@ services:
       - KAFKA_TOPIC_OBSERVATIONS=iot.${GATEWAY_ID}.observations
       - KAFKA_TOPIC_MANAGEMENT_REQ=iot.${GATEWAY_ID}.management.req
       - KAFKA_TOPIC_MANAGEMENT_REP=iot.${GATEWAY_ID}.management.rep
+      - KAFKA_PRODUCER_COMPRESSION_TYPE=snappy
       - KAFKA_BOOTSTRAP_SERVER=kafka-gateway:9082
       - KAFKA_SCHEMA_REGISTRY_URL=https://schema-registry-gateway:8071
       - JAVA_OPTS=-Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.local.only=false
