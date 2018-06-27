@@ -248,10 +248,6 @@ services:
         target: /etc/kafka/secrets/kafka.client-cloud.keystore.jks
       - source: kafka.client-cloud.truststore.jks
         target: /etc/kafka/secrets/kafka.client-cloud.truststore.jks
-      - source: client_security_gateway.properties
-        target: /etc/kafka/secrets/client_security_gateway.properties
-      - source: client_security_cloud.properties
-        target: /etc/kafka/secrets/client_security_cloud.properties
     networks:
       - gateway
       - cloudnet
@@ -282,6 +278,8 @@ services:
         target: /etc/kafka/secrets/kafka.client-gateway.keystore.jks
       - source: kafka.client-gateway.truststore.jks
         target: /etc/kafka/secrets/kafka.client-gateway.truststore.jks
+      - source: client_security_cloud.properties
+        target: /etc/kafka/secrets/client_security_cloud.properties
       - source: client_security_gateway.properties
         target: /etc/kafka/secrets/client_security_gateway.properties
     networks:
