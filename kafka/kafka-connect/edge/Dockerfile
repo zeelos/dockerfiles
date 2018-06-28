@@ -1,4 +1,4 @@
-FROM zeelos/kafka-connect-standalone:4.1.1
+FROM zeelos/kafka-connect-standalone:4.1.1-openj9
 MAINTAINER zeelos.io - https://zeelos.io
 
 # add Replicator connector

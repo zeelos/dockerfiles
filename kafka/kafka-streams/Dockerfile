@@ -1,4 +1,4 @@
-FROM zeelos/zulu-openjdk-debian:8u172-8.30.0.1
+FROM zeelos/eclipse-openj9-debian:jdk8u162-b12_openj9-0.8.0
 MAINTAINER zeelos.io - https://zeelos.io
 
 ENV LESHAN_KAFKA_STREAMS_DEMO_VERSION 0.1-SNAPSHOT

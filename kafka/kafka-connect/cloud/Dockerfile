@@ -1,4 +1,4 @@
-FROM confluentinc/cp-kafka-connect:4.1.1
+FROM zeelos/cp-kafka-connect:4.1.1-openj9
 MAINTAINER zeelos.io - https://zeelos.io
 
 ENV LESHAN_DRIVER_VERSION 0.1-SNAPSHOT
