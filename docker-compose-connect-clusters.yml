@@ -6,7 +6,7 @@ version: '3.6'
 services:
 
   kafka-connect-influxdb:
-    image: zeelos/kafka-connect-leshan-influxdb:0.1-SNAPSHOT
+    image: zeelos/kafka-connect-leshan-influxdb:0.1-SNAPSHOT-openj9
     environment:
       - CONNECT_BOOTSTRAP_SERVERS=kafka-cloud:9092
       - CONNECT_LISTENERS=https://0.0.0.0:8083
@@ -90,7 +90,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-connect-leshan-asset:
-    image: zeelos/kafka-connect-leshan-influxdb:0.1-SNAPSHOT
+    image: zeelos/kafka-connect-leshan-influxdb:0.1-SNAPSHOT-openj9
     environment:
       - CONNECT_BOOTSTRAP_SERVERS=kafka-cloud:9092
       - CONNECT_LISTENERS=https://0.0.0.0:8083
