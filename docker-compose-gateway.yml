@@ -6,7 +6,7 @@ version: '3.6'
 services:
 
   zookeeper-gateway:
-    image: confluentinc/cp-zookeeper:4.1.1
+    image: confluentinc/cp-zookeeper:5.0.0
     volumes:
       - zookeeper-data:/var/lib/zookeeper/data
       - zookeeper-log:/var/lib/zookeeper/log
@@ -45,7 +45,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-gateway:
-    image: confluentinc/cp-kafka:4.1.1
+    image: confluentinc/cp-kafka:5.0.0
     volumes:
       - kafka-data:/var/lib/kafka/data
     environment:
@@ -105,7 +105,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   schema-registry-gateway:
-    image: confluentinc/cp-schema-registry:4.1.1
+    image: confluentinc/cp-schema-registry:5.0.0
     environment:
       - SCHEMA_REGISTRY_HOST_NAME=schema-registry-${GATEWAY_ID}
       - SCHEMA_REGISTRY_LISTENERS=https://0.0.0.0:8071
@@ -159,7 +159,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-rest-gateway:
-    image: confluentinc/cp-kafka-rest:4.1.1
+    image: confluentinc/cp-kafka-rest:5.0.0
     environment:
       - KAFKA_REST_HOST_NAME=kafka-rest-gateway
       - KAFKA_REST_LISTENERS=https://0.0.0.0:8072
@@ -211,7 +211,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-mirrormaker-gateway:
-    image: zeelos/kafka-mirrormaker:4.1.1
+    image: zeelos/kafka-mirrormaker:5.0.0
     environment:
       - MIRRORMAKER_WHITE_LIST=^iot.${GATEWAY_ID}.management.req
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
@@ -265,7 +265,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-command-client:
-    image: confluentinc/cp-kafka-connect-base:4.1.1
+    image: confluentinc/cp-kafka-connect-base:5.0.0
     environment:
       - GATEWAY_ID=${GATEWAY_ID}
       - SCHEMA_REGISTRY_OPTS=-Djavax.net.ssl.trustStore=/etc/kafka/secrets/kafka.client-gateway.truststore.jks
@@ -321,7 +321,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   leshan-server-kafka-gateway:
-    image: zeelos/leshan-server-kafka:0.1-SNAPSHOT
+    image: zeelos/leshan-server-kafka:0.2-SNAPSHOT
     volumes:
       - leshan-server-data:/opt/leshan-server-kafka
     environment:

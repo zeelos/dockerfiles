@@ -6,7 +6,7 @@ version: '3.6'
 services:
 
   kafka-mirrormaker:
-    image: zeelos/kafka-mirrormaker:4.1.1
+    image: zeelos/kafka-mirrormaker:5.0.0
     environment:
       - MIRRORMAKER_WHITE_LIST=^iot.${GATEWAY_ID}.((?!req).)*$$
       - MIRRORMAKER_ABORT_ON_SEND_FAILURE=true
