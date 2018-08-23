@@ -6,7 +6,7 @@ version: '3.6'
 services:
 
   prometheus:
-    image: prom/prometheus:v2.2.1
+    image: prom/prometheus:v2.3.2
     volumes:
       - prometheus-data:/prometheus
     command:
@@ -37,7 +37,7 @@ services:
       io.zeelos.role: "Prometheus - From metrics to insight, Power your metrics and alerting with a leading open-source monitoring solution"
 
   alertmanager:
-    image: prom/alertmanager:v0.14.0
+    image: prom/alertmanager:v0.15.2
     volumes:
       - alertmanager-data:/alertmanager
     networks:
@@ -79,7 +79,7 @@ services:
       io.zeelos.role: "unsee - Alert dashboard for Prometheus Alertmanager"
 
   cadvisor:
-    image: zeelos/cadvisor:v0.29.1
+    image: zeelos/cadvisor:v0.30.2
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock,readonly
       - /:/rootfs

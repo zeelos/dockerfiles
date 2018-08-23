@@ -295,7 +295,7 @@ services:
       io.zeelos.gatewayId: ${GATEWAY_ID}
 
   kafka-exporter-gateway:
-    image: zeelos/kafka_exporter:v1.1.0
+    image: zeelos/kafka_exporter:v1.2.0
     secrets:
       - source: client-gateway.certificate.pem
         target: /etc/kafka/secrets/client-gateway.certificate.pem
