@@ -1,4 +1,4 @@
-FROM grafana/grafana:5.3.4
+FROM grafana/grafana:5.4.3
 MAINTAINER zeelos.io - https://zeelos.io
 
 # initialize with 'zeelosdb' datasource plus a demo dashboard.
