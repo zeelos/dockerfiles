@@ -1,4 +1,4 @@
-FROM influxdb:1.7.3
+FROM influxdb:1.7.4
 MAINTAINER zeelos.io - https://zeelos.io
 
 # initialize influxdb with an empty 'zeelosdb' database
