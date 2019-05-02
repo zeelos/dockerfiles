@@ -1,5 +1,5 @@
 FROM images.zeelos.io/library/cp-kafka-connect:5.2.1-amd64
-MAINTAINER zeelos.io - https://zeelos.io
+LABEL maintainer="dev@zeelos.io" description="Kafka-Connect - docker image that includes replicator, leshan and influxdb connectors"
 
 ENV LESHAN_DRIVER_VERSION 0.4-SNAPSHOT
 ENV TRANSFORMS_VERSION 0.4-SNAPSHOT
