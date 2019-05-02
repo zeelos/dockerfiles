@@ -1,4 +1,4 @@
-FROM images.zeelos.io/library/openjdk:8u212-jre-stretch-amd64
+FROM images.zeelos.io/library/openjdk:8u212-jre-stretch-arm64v8
 LABEL maintainer="dev@zeelos.io" description="Leshan - OMA Lightweight M2M server and client in Java"
 
 ENV LESHAN_CLIENT_MODBUS_VERSION 0.7-SNAPSHOT

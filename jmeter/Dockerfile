@@ -4,7 +4,7 @@
 # [2] https://github.com/vears91/lwm2m-jmeter
 # [3] https://github.com/vears91/lwm2m-jmeter/compare/master...zeelos:master
 
-FROM images.zeelos.io/library/openjdk:8u212-jre-stretch-amd64
+FROM images.zeelos.io/library/openjdk:8u212-jre-stretch-arm64v8
 LABEL maintainer="dev@zeelos.io" description="JMeter - A load testing tool for analyzing and measuring the performance of a variety of services"
 
 ENV DEBIAN_FRONTEND noninteractive
