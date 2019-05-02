@@ -1,5 +1,5 @@
-FROM grafana/grafana:5.4.3
-MAINTAINER zeelos.io - https://zeelos.io
+FROM grafana/grafana:6.1.4
+LABEL maintainer="dev@zeelos.io" description="Grafana - Beautiful metric & analytic dashboards (with zeelosdb build-in)"
 
 # initialize with 'zeelosdb' datasource plus a demo dashboard.
 COPY --chown=grafana:grafana ./grafana.db /var/lib/grafana

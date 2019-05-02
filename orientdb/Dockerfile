@@ -1,5 +1,5 @@
-FROM orientdb:3.0.15-tp3
-MAINTAINER zeelos.io - https://zeelos.io
+FROM orientdb:3.0.18-tp3
+LABEL maintainer="dev@zeelos.io" description="OrientDB - Distributed Multi-Model and Graph Database (with zeelosdb built-in)"
 
 # initialize orientdb with 'zeelosdb' database
 ADD ./databases/zeelosdb.tar.gz /orientdb/databases

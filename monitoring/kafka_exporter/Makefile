@@ -8,7 +8,7 @@ TAG = $(shell cat VERSION)
 #DOCKER_USER = #user#
 #DOCKER_PASS = #password#
 ifeq ($(REPO),)
-  REPO = zeelos/kafka_exporter
+  REPO = images.zeelos.io/library/kafka_exporter
 endif
 
 all: $(ARCHITECTURES)
@@ -41,21 +41,21 @@ base:
 	fi
 
 push:
-	@docker login -u $(DOCKER_USER) -p "$(DOCKER_PASS)"
+	@docker login $(REPO) -u $(DOCKER_USER) -p "$(DOCKER_PASS)"
 	@$(foreach arch,$(ARCHITECTURES), docker push $(REPO):linux-$(arch)-$(TAG);)
-	@docker logout
+	@docker logout $(REPO)
 
 manifest:
 	@wget -O docker https://6582-88013053-gh.circle-artifacts.com/1/work/build/docker-linux-amd64
 	@chmod +x docker
-	@./docker login -u $(DOCKER_USER) -p "$(DOCKER_PASS)"
+	@./docker login $(REPO) -u $(DOCKER_USER) -p "$(DOCKER_PASS)"
 	@./docker manifest create $(REPO):$(TAG) \
 			$(foreach arch,$(ARCHITECTURES), $(REPO):linux-$(arch)-$(TAG)) --amend
 	@$(foreach arch,$(ARCHITECTURES), ./docker manifest annotate \
 			$(REPO):$(TAG) $(REPO):linux-$(arch)-$(TAG) \
 			--os linux $(strip $(call convert_variants,$(arch)));)
 	@./docker manifest push $(REPO):$(TAG)
-	@./docker logout
+	@./docker logout $(REPO)
 	@rm -f docker
 
 test:

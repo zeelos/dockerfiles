@@ -4,7 +4,7 @@
 # [2] https://github.com/vears91/lwm2m-jmeter
 # [3] https://github.com/vears91/lwm2m-jmeter/compare/master...zeelos:master
 
-FROM zeelos/zulu-openjdk-debian:8u172-8.30.0.1
+FROM images.zeelos.io/library/zulu-openjdk-debian:8u172-8.30.0.1-amd64
 MAINTAINER zeelos.io - https://zeelos.io
 
 ENV DEBIAN_FRONTEND noninteractive
