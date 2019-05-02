@@ -1,5 +1,5 @@
-FROM images.zeelos.io/library/zulu-openjdk-debian:8u172-8.30.0.1-amd64
-MAINTAINER zeelos.io - https://zeelos.io
+FROM images.zeelos.io/library/openjdk:8u212-jre-stretch-amd64
+LABEL maintainer="dev@zeelos.io" description="Leshan - OMA Lightweight M2M server and client in Java"
 
 ENV LESHAN_KAFKA_SERVER_VERSION 0.7-SNAPSHOT
 
