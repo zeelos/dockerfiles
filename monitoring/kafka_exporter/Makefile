@@ -8,7 +8,7 @@ TAG = $(shell cat VERSION)
 #DOCKER_USER = #user#
 #DOCKER_PASS = #password#
 ifeq ($(REPO),)
-  REPO = images.zeelos.io/library/kafka_exporter
+  REPO = zeelos/kafka_exporter
 endif
 
 all: $(ARCHITECTURES)

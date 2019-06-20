@@ -8,7 +8,7 @@ TAG = $(shell cat VERSION)
 #DOCKER_USER = #user#
 #DOCKER_PASS = #password#
 ifeq ($(REPO),)
-  REPO = images.zeelos.io/library/cadvisor
+  REPO = zeelos/cadvisor
 endif
 
 all: $(ARCHITECTURES)

@@ -1,4 +1,4 @@
-FROM images.zeelos.io/library/openjdk:8u212-jre-stretch-amd64
+FROM zeelos/openjdk:8u212-jre-stretch-amd64
 LABEL maintainer="dev@zeelos.io" description="kstreams-demo examples demonstrating KStream technology"
 
 ENV LESHAN_KAFKA_STREAMS_DEMO_VERSION 0.4-SNAPSHOT
