@@ -1,8 +1,8 @@
-FROM zeelos/cp-kafka-connect:5.2.1-amd64
+FROM zeelos/cp-kafka-connect:5.2.2
 LABEL maintainer="dev@zeelos.io" description="Kafka-Connect - docker image that includes leshan and influxdb connectors"
 
-ENV LESHAN_DRIVER_VERSION 0.4-SNAPSHOT
-ENV TRANSFORMS_VERSION 0.4-SNAPSHOT
+ENV LESHAN_DRIVER_VERSION 0.5-SNAPSHOT
+ENV TRANSFORMS_VERSION 0.5-SNAPSHOT
 
 ENV STREAM_REACTOR_VERSION 1.2.1
 ENV INFLUXDB_DRIVER_VERSION 2.1.0

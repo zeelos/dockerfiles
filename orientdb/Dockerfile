@@ -1,4 +1,4 @@
-FROM orientdb:3.0.18-tp3
+FROM orientdb:3.0.20-tp3
 LABEL maintainer="dev@zeelos.io" description="OrientDB - Distributed Multi-Model and Graph Database (with zeelosdb built-in)"
 
 # initialize orientdb with 'zeelosdb' database
